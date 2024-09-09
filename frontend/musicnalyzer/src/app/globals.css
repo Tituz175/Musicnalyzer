@@ -22,7 +22,10 @@
 
 body {
   background: var(--background-primary);
-  font-family: var(--secondary-font)
+  font-family: var(--secondary-font);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 @layer utilities {
