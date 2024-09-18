@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Raleway, Merriweather } from "next/font/google"
+import { Raleway, Merriweather } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,16 +10,16 @@ export const metadata: Metadata = {
 };
 
 const raleway = Raleway({
-  subsets: ['latin'],
+  subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  variable: '--font-raleway'
-})
+  variable: "--font-raleway",
+});
 
-const merriwether = Merriweather({
-  subsets: ['latin'],
+const merriweather = Merriweather({
+  subsets: ["latin"],
   weight: ["300", "400", "700", "900"],
-  variable: '--font-merriwether'
-})
+  variable: "--font-merriwether",
+});
 
 export default function RootLayout({
   children,
@@ -28,7 +28,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${raleway.variable} ${merriwether.variable} font-primary`}>
+      <head>
+        <meta charSet='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <meta name='description' content={`${metadata.description}`} />
+        <title>{`${metadata.title}`}</title>
+      </head>
+      <body
+        className={`${raleway.variable} ${merriweather.variable} font-primary`}
+      >
         <NavBar />
         {children}
         <Footer />
