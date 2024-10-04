@@ -1,52 +1,73 @@
+import os
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+from flask_pymongo import PyMongo
+from controllers import SongController
 
-# from pymongo.mongo_client import MongoClient
-# from pymongo.server_api import ServerApi
+app = Flask(__name__)
+app.config["MONGO_URI"] = "mongodb://localhost:27017/musicnalyzer"
+app.config["UPLOAD_FOLDER"] = "uploads"  # Ensure you have an "uploads" folder
+app.config["ALLOWED_EXTENSIONS"] = {"mp3"}  # Restrict file types
 
-# uri = "mongodb://dbmusic:tituz175@cluster0-shard-00-00.uw05m.mongodb.net:27017,cluster0-shard-00-01.uw05m.mongodb.net:27017,cluster0-shard-00-02.uw05m.mongodb.net:27017/?retryWrites=true&w=majority&appName=Cluster0"
+mongo = PyMongo(app)
+CORS(app)  # Enable CORS
 
-# # Create a new client and connect to the server
-# client = MongoClient(uri, server_api=ServerApi('1'))
+# Ensure the upload folder exists
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-# # Send a ping to confirm a successful connection
-# try:
-#     client.admin.command('ping')
-#     print("Pinged your deployment. You successfully connected to MongoDB!")
-# except Exception as e:
-#     print(e)
+song_controller = SongController(mongo)
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config["ALLOWED_EXTENSIONS"]
 
 
-# from pymongo import MongoClient
+@app.route("/")
+def hello():
+    return song_controller.get_all_songs()
 
-# # Replace the placeholder values with your actual credentials and cluster details
-# username = "dbmusic"
-# password = "tituz175"
-# cluster_url = "cluster0-shard-00-00.uw05m.mongodb.net:27017,cluster0-shard-00-01.uw05m.mongodb.net:27017,cluster0-shard-00-02.uw05m.mongodb.net:27017"
+@app.route("/insert", methods=["POST"])
+def insert_song():
+    # Check if the 'file' part is in the request
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
 
-# # Construct your connection string using mongodb:// instead of mongodb+srv://
-# connection_string = f"mongodb://{username}:{password}@{cluster_url}/?ssl=true&replicaSet=atlas-xxxxx-shard-0&authSource=admin&retryWrites=true&w=majority"
+    file = request.files['file']
 
-# try:
-#     # Create a MongoClient
-#     client = MongoClient(connection_string)
+    # Check if a file was actually uploaded
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
 
-#     # Test the connection by listing databases
-#     databases = client.list_database_names()
-#     print("Connected to MongoDB Atlas successfully!")
-#     print("Databases:", databases)
+    # Validate the file extension
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(file_path)
 
-# except Exception as e:
-#     print(f"An error occurred: {e}")
+        # Prepare song data to insert into MongoDB
+        song_data = request.form.to_dict()  # Fetch additional form data
+        song_data['file_path'] = file_path  # Add file path to the song data
 
-from pymongo import MongoClient
+        # Prepare song data for MongoDB insertion
+        song_data = {
+            "song": filename,
+            "artist": request.form.get("artist", ""),
+            "paths": file_path,
+            "musical_key": request.form.get("musical_key", ""),
+            "song_tempo": request.form.get("song_tempo", ""),
+            "lyrics": request.form.get("lyrics", ""),
+            "musical_parts":{
+                "soprano_path": request.form.get("soprano_path", ""),
+                "alto_path": request.form.get("alto_path", ""),
+                "tenor_path": request.form.get("tenor_path", ""),
+                "instrumental_path": request.form.get("instrumental_path", "")
+            }
+        }
 
-client = MongoClient("mongodb+srv://dbmusic:tituz175@cluster0.uw05m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+        # Call the song controller to insert the song data
+        return song_controller.insert_song(song_data)
+    else:
+        return jsonify({"error": "File type not allowed"}), 400
 
-db=client['db1']
-collection = db['youtube']
-
-doc = {"name": "tobi", "city":"ibadan"}
-inserted_document = collection.insert_one(doc)
-
-print(f"Inserted Document ID: {inserted_document.inserted_id}")
-client.close()
+if __name__ == '__main__':
+    app.run(debug=True)

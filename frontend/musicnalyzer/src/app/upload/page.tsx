@@ -1,18 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import FileUpload from "@/components/FileUpload";
 import Image from "next/image";
 
 export default function Upload() {
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const handleFileUpload = (file: File | null) => {
-    setUploadedFile(file);
-  };
-
-  const router = useRouter()
 
   return (
     <div
@@ -35,20 +25,7 @@ export default function Upload() {
             Upload File
           </h3>
         </div>
-        <FileUpload onFileUpload={handleFileUpload} />
-        <div className='flex justify-center'>
-          <button
-            className={`text-lg py-3 px-6 border-0 rounded-md font-bold transition-all duration-500 ease-in-out
-              ${uploadedFile
-                ? "bg-foreground text-white hover:bg-accent"
-                : "bg-gray-400 text-gray-200 cursor-not-allowed"}`}
-            onClick={()=>{
-              router.push("/analyze")
-            }}
-          >
-            Analyze
-          </button>
-        </div>
+        <FileUpload />
       </div>
     </div>
   );
