@@ -1,15 +1,19 @@
 <!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Custom Input Range s11der</title>
-        <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <div class="box">
-        <input type="range" cLass="range" value="0" min="0" max="100" onmousemove="rangeSlider (this.value)">
-        <span id="rangeValue">0</span>
+    <div>
+        <div id="rangeValue">0</div>
+        <div class="box">
+            <input type="range" cLass="range" value="0" min="0" max="100" onmousemove="rangeSlider (this.value)">
+        </div>
+        
     </div>
     <script>
         function rangeSlider(value) {
@@ -17,4 +21,5 @@
         }
     </script>
 </body>
+
 </html>

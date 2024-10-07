@@ -28,8 +28,13 @@ export default function Analyze() {
       </h3>
 
       <section className="flex items-center w-full">
-        <div className="w-1/2">
-          <VerticalSlider />
+        <div className="w-1/2 flex items-center justify-center p-10">
+          <div className='w-full flex justify-between'>
+          <VerticalSlider inputValue="Soprano"/>
+          <VerticalSlider inputValue="Alto"/>
+          <VerticalSlider inputValue="Tenor"/>
+          <VerticalSlider inputValue="the title"/>
+          </div>
         </div>
         <div className="w-1/2">
           <h4 className="font-semibold text-2xl font-secondary">Lyrics</h4>

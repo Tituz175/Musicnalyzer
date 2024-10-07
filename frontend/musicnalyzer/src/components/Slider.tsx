@@ -1,57 +1,32 @@
-"use client"
+import { useState } from 'react';
 
-import { useState, ChangeEvent } from 'react';
+type sliderprops = {
+  inputValue: string,
+};
 
-const VerticalSlider: React.FC = () => {
-  const [value, setValue] = useState<number>(55); // Default value at 55%
+const VerticalSlider: React.FC<sliderprops> = ({ inputValue }) => {
+  const [rangeValue, setRangeValue] = useState<number>(0);
 
-  const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(e.target.value)); // Update the slider value
+  const handleRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRangeValue(Number(e.target.value));
   };
 
   return (
-    <div className="flex flex-col items-center space-y-2">
-      {/* Slider Value */}
-      <div className="text-lg font-medium">{value}%</div>
-
-      {/* Slider */}
+    <div className="slider-container">
+      <div className="value-display" id='rangeValue'>
+        {rangeValue}
+      </div>
       <input
         type="range"
+        className="range"
+        value={rangeValue}
         min="0"
         max="100"
-        value={value}
-        className="w-2 h-48 appearance-none bg-gray-300 rounded-full relative"
-        onChange={handleSliderChange}
-        style={{
-          background: `linear-gradient(to top, black ${value}%, lightgray ${value}%)`,
-        }}
+        onChange={handleRangeChange}
       />
-
-      {/* Custom styling for slider thumb */}
-      {/* <style jsx>{`
-        input[type='range']::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          background: white;
-          border: 2px solid black;
-          border-radius: 50%;
-          cursor: pointer;
-        }
-
-        input[type='range']::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          background: white;
-          border: 2px solid black;
-          border-radius: 50%;
-          cursor: pointer;
-        }
-      `}</style> */}
-
-      {/* Label at the bottom */}
-      <div className="text-xl font-semibold">Soprano</div>
+      <div className="slider-title">
+        {inputValue}
+      </div>
     </div>
   );
 };
