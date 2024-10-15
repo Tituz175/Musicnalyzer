@@ -1,9 +1,10 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from flask_pymongo import PyMongo
 from controllers import SongController
+from utils.handle_load import load_song, analyze_song
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/musicnalyzer"
@@ -44,6 +45,9 @@ def insert_song():
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(file_path)
 
+        audio, sample_rate = load_song(file_path)
+        key, bpm = analyze_song(audio, sample_rate)
+
         # Prepare song data to insert into MongoDB
         song_data = request.form.to_dict()  # Fetch additional form data
         song_data['file_path'] = file_path  # Add file path to the song data
@@ -53,8 +57,9 @@ def insert_song():
             "song": filename,
             "artist": request.form.get("artist", ""),
             "paths": file_path,
-            "musical_key": request.form.get("musical_key", ""),
-            "song_tempo": request.form.get("song_tempo", ""),
+            "duration": float(request.form.get("duration", "0")),
+            "musical_key": key,
+            "song_tempo": bpm,
             "lyrics": request.form.get("lyrics", ""),
             "musical_parts":{
                 "soprano_path": request.form.get("soprano_path", ""),
@@ -68,6 +73,31 @@ def insert_song():
         return song_controller.insert_song(song_data)
     else:
         return jsonify({"error": "File type not allowed"}), 400
+
+@app.route('/uploads/<path:filename>', methods=['GET'])
+def serve_audio(filename):
+    return send_from_directory('uploads', filename)
+
+@app.route("/songs/<song_id>", methods=["GET"])
+def get_song_by_id(song_id):
+    try:
+        # Fetch the song details using the song_id
+        song_details = song_controller.get_song_by_id(song_id)
+        
+        if song_details is None:
+            return jsonify({"error": "Song not found"}), 404
+
+        # Return song details including the path to the song file
+        return jsonify(song_details), 200
+    except Exception as e:
+        print({e})
+        return jsonify({"error": f"Error fetching song: {e}"}), 500
+
+
+@app.route('/change_key', methods=['POST'])
+def method_name():
+    pass
+
 
 if __name__ == '__main__':
     app.run(debug=True)

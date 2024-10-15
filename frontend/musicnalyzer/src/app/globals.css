@@ -58,6 +58,15 @@ body {
       inset -5px -5px 5px rgba(255, 255, 255, 0.25);
 }
 
+.vertical {
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.horizontal {
+  width: 100%;
+}
+
 .range {
   width: 200px; 
   height: auto;
@@ -69,8 +78,6 @@ body {
       -5px -5px 10px var(--foreground-tertiary),
       inset 5px 5px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transform: rotate(-90deg);
-  transform-origin: center;
   position: relative;
 }
 

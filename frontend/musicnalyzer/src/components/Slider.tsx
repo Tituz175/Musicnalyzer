@@ -1,28 +1,30 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 
-type sliderprops = {
-  inputValue: string,
-};
+interface sliderprops {
+  volume: number;
+  onVolumeChange: (value: number) => void;
+  inputValue: string;
+}
 
-const VerticalSlider: React.FC<sliderprops> = ({ inputValue }) => {
-  const [rangeValue, setRangeValue] = useState<number>(0);
-
-  const handleRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRangeValue(Number(e.target.value));
+const VerticalSlider: React.FC<sliderprops> = ({ volume, onVolumeChange, inputValue }) => {
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onVolumeChange(Number(e.target.value));
   };
 
   return (
     <div className="slider-container">
       <div className="value-display" id='rangeValue'>
-        {rangeValue}
+        {(volume * 100).toFixed(0)}%
       </div>
       <input
         type="range"
-        className="range"
-        value={rangeValue}
+        className="range vertical"
+        value={volume}
+        id="volume"
         min="0"
-        max="100"
-        onChange={handleRangeChange}
+        step="0.01"
+        max="1"
+        onChange={handleVolumeChange}
       />
       <div className="slider-title">
         {inputValue}

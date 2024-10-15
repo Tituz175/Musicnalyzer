@@ -1,49 +1,76 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from 'react';
-import VerticalSlider from "@/components/Slider";
+import { useEffect, useState, useMemo } from "react";
+import MetadataDisplay from "@/components/MetadataDisplay";
+import KeyBpmControl from "@/components/KeyBpmControl";
+import VolumeControl from "@/components/VolumeControl";
+import LyricsDisplay from "@/components/LyricsDisplay";
+import AudioPlayer from "@/components/AudioPlayer";
 
-interface Metadata {
+interface SongData {
   title: string;
   artist: string;
+  musical_key: string;
+  song_tempo: string;
+  lyrics: string;
+  paths: string;
 }
 
 export default function Analyze() {
-  const [metadata, setMetadata] = useState<Metadata | null>(null);
+  const [songData, setSongData] = useState<SongData | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+
+  // Memoize metaDataParsed to ensure it only changes when 'metadata' in localStorage changes
+  const metaDataParsed = useMemo(() => {
+    const metaData = localStorage.getItem('metadata');
+    return metaData ? JSON.parse(metaData) : null;
+  }, []); // Only re-run this when the component first mounts
 
   useEffect(() => {
-    const storedMetadata = localStorage.getItem("metadata");
-    if (storedMetadata) {
-      setMetadata(JSON.parse(storedMetadata));
+    if (metaDataParsed && metaDataParsed.id) {
+      const songId = metaDataParsed.id;
+
+      // Fetch song details from backend using song ID
+      const fetchSongData = async () => {
+        try {
+          const response = await fetch(`http://localhost:5000/songs/${songId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch song data');
+          }
+
+          const data = await response.json();
+          const fullAudioUrl = `http://localhost:5000/${data.paths}`;
+
+          // Set song data and audio URL
+          setSongData({ ...data, paths: fullAudioUrl });
+        } catch (error) {
+          console.error('Error fetching song data:', error);
+        }
+      };
+
+      fetchSongData();
     }
-  }, []);
+
+  }, [metaDataParsed]);
+
 
   return (
     <div className="px-4 sm:px-8 md:px-16 lg:px-60 text-foreground">
-      <h2 className="font-bold text-5xl font-secondary">
-        {metadata ? metadata.title : "Unknown Title"}
-      </h2>
-      <h3 className="font-semibold text-4xl font-secondary">
-        {metadata ? metadata.artist : "Unknown Artist"}
-      </h3>
-
-      <section className="flex items-center w-full">
-        <div className="w-1/2 flex items-center justify-center p-10">
-          <div className='w-full flex justify-between'>
-          <VerticalSlider inputValue="Soprano"/>
-          <VerticalSlider inputValue="Alto"/>
-          <VerticalSlider inputValue="Tenor"/>
-          <VerticalSlider inputValue="the title"/>
-          </div>
+      <MetadataDisplay title={metaDataParsed?.title || "Unknown Title"} artist={metaDataParsed?.artist || "Unknown Artist"} />
+      <section className="flex items-center w-full font-secondary">
+        <div className="w-1/2 flex flex-col items-center justify-center p-10">
+          <KeyBpmControl musicalKey={songData?.musical_key || "C"} bpm={songData?.song_tempo || "160"} />
+          <VolumeControl volume={volume} onVolumeChange={setVolume}/>
         </div>
-        <div className="w-1/2">
-          <h4 className="font-semibold text-2xl font-secondary">Lyrics</h4>
-          <div></div>
-        </div>
+        <LyricsDisplay lyrics={songData?.lyrics || ""} />
       </section>
-      <section>
-        <div></div>
-      </section>
+      <AudioPlayer
+        audioUrl={songData?.paths || ""}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        volume={volume}
+      />
     </div>
   );
 }
