@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-tertiary font-secondary text-gray-500 py-4 text-center h-20">
+    <footer className="bg-tertiary font-secondary text-gray-500 py-4 text-center h-20 fixed bottom-0 w-full">
       <div className="container mx-auto px-6">
         <p>
           &copy; {new Date().getFullYear()} Musicalyzer. All rights reserved.

@@ -16,17 +16,14 @@ body {
 }
 
 .box {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 20px;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0. 05),
             #edf1f4);
     border-radius: 40px;
     box-shadow: 15px 15px 20px rgba(0, 0, 0, 0.1),
         -15px -15px 20px #fff;
-    transform: rotate();
+    transform: rotate(-90deg) translate(-100%, 26%);
+    transform-origin: 0 0;
 }
 
 .range {
@@ -55,6 +52,7 @@ body {
 
 #rangeValue {
     position: relative;
+    bottom: 100%;
     text-align: center;
     width: 60px;
     font-size: 1.25rem;
