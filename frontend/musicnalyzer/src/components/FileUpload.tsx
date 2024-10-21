@@ -41,7 +41,7 @@ export default function FileUpload() {
           const songMetadata = {
             title: metadata ? metadata.title : "Unknown Title",
             artist: metadata ? metadata.artist : "Unknown Artist",
-            id: data.inserted_id,
+            id: data.song_id,
             duration: metadata ? metadata.duration : 0
           }
           localStorage.setItem("metadata", JSON.stringify(songMetadata));

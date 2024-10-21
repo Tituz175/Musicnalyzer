@@ -17,10 +17,11 @@ class SongController:
 
         if result and hasattr(result, 'inserted_id'):
             # Return the MongoDB object ID of the inserted document
-            return jsonify({
-                "status": "Document inserted successfully",
-                "inserted_id": str(result.inserted_id)  # Convert ObjectId to string for JSON serialization
-            }), 200
+            return str(result.inserted_id)
+            # return jsonify({
+            #     "status": "Document inserted successfully",
+            #     "song_id":   # Convert ObjectId to string for JSON serialization
+            # }), 200
         else:
             return jsonify({"error": "Error inserting song"}), 500
 
@@ -43,6 +44,7 @@ class SongController:
         if isinstance(song, dict):
             # Create a new dictionary excluding the _id, song, and artist fields
             filtered_song = {
+                "filename": song.get("song"),
                 "paths": song.get("paths"),
                 "duration": song.get("duration"),
                 "musical_key": song.get("musical_key"),

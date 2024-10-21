@@ -11,12 +11,16 @@ export default function AudioPlayer({ audioUrl, isPlaying, setIsPlaying, volume 
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const handlePlayPause = () => {
-        setIsPlaying(!isPlaying);
         if (audioRef.current) {
-            if (!isPlaying) {
-                audioRef.current.play();
-            } else {
+            if (isPlaying) {
                 audioRef.current.pause();
+                setIsPlaying(false);
+            } else {
+                audioRef.current.play().catch(error => {
+                    console.error('Playback failed:', error);
+                    setIsPlaying(false); // Ensure the play state remains consistent
+                });
+                setIsPlaying(true);
             }
         }
     };
@@ -26,7 +30,44 @@ export default function AudioPlayer({ audioUrl, isPlaying, setIsPlaying, volume 
         if (audioRef.current) {
             audioRef.current.volume = volume;
         }
-    }, [volume]); // Volume changes are handled here
+    }, [volume]);
+
+    // Handle when the audio ends
+    useEffect(() => {
+        const audioElement = audioRef.current;
+
+        const handleAudioEnd = () => {
+            setIsPlaying(false);
+        };
+
+        if (audioElement) {
+            // Add event listener when the component mounts
+            audioElement.addEventListener('ended', handleAudioEnd);
+        }
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            if (audioElement) {
+                audioElement.removeEventListener('ended', handleAudioEnd);
+            }
+        };
+    }, [setIsPlaying]);
+
+    // Update the audio source when audioUrl changes
+    useEffect(() => {
+        if (audioRef.current) {
+            const wasPlaying = !audioRef.current.paused; // Check if audio was playing
+
+            // Set new source
+            audioRef.current.src = audioUrl;
+
+            if (wasPlaying) {
+                audioRef.current.play().catch(error => {
+                    console.error('Playback failed due to user interaction:', error);
+                });
+            }
+        }
+    }, [audioUrl, setIsPlaying]);
 
     return (
         <section className="py-6">
@@ -38,7 +79,7 @@ export default function AudioPlayer({ audioUrl, isPlaying, setIsPlaying, volume 
             </button>
 
             {/* Audio element */}
-            <audio ref={audioRef} src={audioUrl} hidden />
+            <audio ref={audioRef} hidden />
         </section>
     );
 }
