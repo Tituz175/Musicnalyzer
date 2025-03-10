@@ -20,6 +20,10 @@
   }
 } */
 
+html, body {
+  height: 100%;
+}
+
 body {
   background: var(--background-primary);
   font-family: var(--secondary-font);

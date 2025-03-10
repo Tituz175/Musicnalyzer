@@ -34,3 +34,21 @@ def change_key(audio, sample_rate, value, name, new_key):
 
     print(f"Pitch-shifted audio saved as WAV: {output_path}")
     return {"new_path": output_path_url, "new_key": new_key}
+
+
+def generate_vocal_parts(soprano):
+    print(soprano)
+    # Load the audio file
+    soprano_audio, sample_rate = librosa.load(soprano)
+
+    alto = soprano.replace("Soprano", "Alto")
+    tenor = soprano.replace("Soprano", "Tenor")
+
+    # Generate the root, major third, and perfect fifth
+    alto_audio = librosa.effects.pitch_shift(soprano_audio, sr=sample_rate, n_steps=-5)  # Major third above (Alto)
+    tenor_audio = librosa.effects.pitch_shift(soprano_audio, sr=sample_rate, n_steps=-8)  # Perfect fifth above (Tenor)
+
+    sf.write(alto, alto_audio, sample_rate)
+    sf.write(tenor, tenor_audio, sample_rate)
+
+    return (alto, tenor)

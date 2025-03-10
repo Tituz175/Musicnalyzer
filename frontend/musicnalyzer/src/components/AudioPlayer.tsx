@@ -1,85 +1,251 @@
-import { useRef, useEffect } from "react";
+/**
+ * AudioPlayer component for playing multiple audio stems in sync.
+ *
+ * This component provides an audio player with the capability to handle multiple audio stems,
+ * allowing for individual volume control and synchronized playback. It includes play/pause functionality,
+ * a seek bar, and displays the current time and duration of the audio.
+ *
+ * Props:
+ * - `audioStemsObj`: Object containing URLs for each audio stem (e.g., soprano, alto, tenor, instrumentals).
+ * - `isPlaying`: Boolean indicating the current play state.
+ * - `setIsPlaying`: Callback to update the play state.
+ * - `volumes`: Object with volume levels for each audio stem.
+ *
+ * Functional Components:
+ * - `handlePlayPause`: Toggles playback for all audio stems.
+ * - `handleSliderChange`: Handles slider movements to seek within the audio.
+ * - `formatTime`: Formats time in seconds into "minutes:seconds" for display.
+ *
+ * Key Features:
+ * - Syncs playback across multiple audio elements.
+ * - Allows individual volume control for each audio stem.
+ * - Automatically tracks and displays the maximum duration among all stems.
+ * - Styled seek bar provides visual feedback of playback progress.
+ *
+ * Usage:
+ * ```
+ * <AudioPlayer
+ *   audioStemsObj={audioStems}
+ *   isPlaying={isPlaying}
+ *   setIsPlaying={setIsPlaying}
+ *   volumes={volumes}
+ * />
+ * ```
+ *
+ * @returns {JSX.Element} The rendered AudioPlayer component.
+ */
+
+
+import { useRef, useEffect, useState, useMemo } from "react";
+import Waveform from "@/components/Waveform";
 
 interface AudioPlayerProps {
-    audioUrl: string;
+    audioStemsObj: Record<string, string>; // Array of audio stem URLs for multi-stem audio
     isPlaying: boolean;
     setIsPlaying: (playing: boolean) => void;
-    volume: number;
+    volumes: {
+        soprano: number;
+        alto: number;
+        tenor: number;
+        instrumentals: number;
+    };
 }
 
-export default function AudioPlayer({ audioUrl, isPlaying, setIsPlaying, volume }: AudioPlayerProps) {
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+export default function AudioPlayer({
+    audioStemsObj,
+    isPlaying,
+    setIsPlaying,
+    volumes,
+}: AudioPlayerProps) {
+    const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [durations, setDurations] = useState<number[]>([]); // Store durations of each stem
 
+    // Extract stems as an array for easier iteration
+    const audioStems = useMemo(() => {
+        return Object.values(audioStemsObj).filter(Boolean);
+    }, [audioStemsObj]);
+
+    // Handle play/pause toggle for all audio files
     const handlePlayPause = () => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.pause();
-                setIsPlaying(false);
-            } else {
-                audioRef.current.play().catch(error => {
-                    console.error('Playback failed:', error);
-                    setIsPlaying(false); // Ensure the play state remains consistent
-                });
-                setIsPlaying(true);
-            }
+        if (audioRefs.current.length === 0) return;
+
+        if (isPlaying) {
+            // Pause all audios
+            audioRefs.current.forEach((audio) => audio?.pause());
+            setIsPlaying(false);
+        } else {
+            // Play all audios
+            audioRefs.current.forEach((audio) => {
+                if (audio && audio.readyState === 4) {
+                    // Ensure audio is ready
+                    audio.play().catch((error) => {
+                        console.error("Playback failed:", error);
+                        setIsPlaying(false);
+                    });
+                }
+            });
+            setIsPlaying(true);
         }
     };
 
-    // Update the volume whenever it changes
+    // Update volumes based on state changes
     useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = volume;
-        }
-    }, [volume]);
+        let stemNames: string[];
+        audioStems.length == 4
+            ? (stemNames = ["soprano", "alto", "tenor", "instrumentals"])
+            : (stemNames = ["soprano", "instrumentals"]);
 
-    // Handle when the audio ends
+        audioRefs.current.forEach((audio, index) => {
+            if (
+                audio &&
+                volumes[stemNames[index] as keyof typeof volumes] !== undefined
+            ) {
+                audio.volume = volumes[stemNames[index] as keyof typeof volumes];
+            }
+        });
+    }, [volumes, audioStems.length]);
+
+    // Track duration of each audio stem
     useEffect(() => {
-        const audioElement = audioRef.current;
+        const handleDuration = () => {
+            // Get the duration of each audio file and update state
+            const newDurations = audioRefs.current.map(
+                (audio) => audio?.duration || 0
+            );
+            setDurations(newDurations);
+        };
 
+        audioRefs.current.forEach((audio) => {
+            if (audio) {
+                audio.addEventListener("loadedmetadata", handleDuration);
+            }
+        });
+
+        // Clean up listeners
+        return () => {
+            audioRefs.current.forEach((audio) => {
+                if (audio) {
+                    audio.removeEventListener("loadedmetadata", handleDuration);
+                }
+            });
+        };
+    }, [audioStems]);
+
+    // Sync current time for all audio elements
+    useEffect(() => {
+        const updateCurrentTime = () => {
+            if (audioRefs.current[0]) {
+                setCurrentTime(audioRefs.current[0].currentTime);
+            }
+        };
+
+        audioRefs.current.forEach((audio) => {
+            if (audio) {
+                audio.addEventListener("timeupdate", updateCurrentTime);
+            }
+        });
+
+        // Clean up listeners on component unmount or change
+        return () => {
+            audioRefs.current.forEach((audio) => {
+                if (audio) {
+                    audio.removeEventListener("timeupdate", updateCurrentTime);
+                }
+            });
+        };
+    }, [audioStems]);
+
+    // Handle audio end event to stop playback
+    useEffect(() => {
         const handleAudioEnd = () => {
             setIsPlaying(false);
         };
 
-        if (audioElement) {
-            // Add event listener when the component mounts
-            audioElement.addEventListener('ended', handleAudioEnd);
-        }
+        audioRefs.current.forEach((audio) => {
+            if (audio) audio.addEventListener("ended", handleAudioEnd);
+        });
 
-        // Clean up the event listener when the component unmounts
+        // Clean up "ended" event listeners
         return () => {
-            if (audioElement) {
-                audioElement.removeEventListener('ended', handleAudioEnd);
-            }
+            audioRefs.current.forEach((audio) => {
+                if (audio) audio.removeEventListener("ended", handleAudioEnd);
+            });
         };
     }, [setIsPlaying]);
 
-    // Update the audio source when audioUrl changes
-    useEffect(() => {
-        if (audioRef.current) {
-            const wasPlaying = !audioRef.current.paused; // Check if audio was playing
+    // Handle slider change to seek in audio
+    const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTime = parseFloat(e.target.value);
+        audioRefs.current.forEach((audio) => {
+            if (audio) audio.currentTime = newTime;
+        });
+        setCurrentTime(newTime);
+    };
 
-            // Set new source
-            audioRef.current.src = audioUrl;
-
-            if (wasPlaying) {
-                audioRef.current.play().catch(error => {
-                    console.error('Playback failed due to user interaction:', error);
-                });
-            }
-        }
-    }, [audioUrl, setIsPlaying]);
+    // Get the maximum duration of all audio stems
+    const maxDuration = Math.max(...durations);
 
     return (
-        <section className="py-6">
-            <button
-                onClick={handlePlayPause}
-                className="px-6 py-2 bg-accent text-white rounded-md"
-            >
-                {isPlaying ? "Pause" : "Play"}
-            </button>
+        <section className='mt-10 py-6'>
+            {/* Styled range slider */}
+            <Waveform audioUrl={audioStemsObj[selectedStem]} currentTime={currentTime} duration={duration} />
 
-            {/* Audio element */}
-            <audio ref={audioRef} hidden />
+    
+            <div className='text-lg mt-4 flex items-center justify-between text-center space-x-4 font-semibold'>
+                <span className=''>{formatTime(currentTime)}</span>
+    
+                <a
+                    onClick={handlePlayPause}
+                    className='w-16 h-16 bg-accent rounded-full ring-4 ring-white grid place-items-center transition-transform transform hover:scale-110 cursor-pointer'
+                >
+                    {!isPlaying ? (
+                        <svg
+                            className='ml-1 w-8'
+                            viewBox='0 0 16 18'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'
+                        >
+                            <path
+                                d='M15 7.26795C16.3333 8.03775 16.3333 9.96225 15 10.7321L3 17.6603C1.66667 18.4301 1.01267e-06 17.4678 1.07997e-06 15.9282L1.68565e-06 2.0718C1.75295e-06 0.532196 1.66667 -0.430054 3 0.339746L15 7.26795Z'
+                                fill='white'
+                            />
+                        </svg>
+                    ) : (
+                        <svg
+                            className='w-8'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'
+                        >
+                            <path d="M6 4H10V22H6V4Z" fill="white"/>
+                            <path d="M14 4H18V22H14V4Z" fill="white"/>
+                        </svg>
+                    )}
+                </a>
+    
+                <span className='font-mono'>{formatTime(maxDuration)}</span>
+            </div>
+    
+            {/* Render audio elements for all stems */}
+            {audioStems.map((audioUrl, index) => (
+                <audio
+                    key={index}
+                    ref={(el) => (audioRefs.current[index] = el)}
+                    src={audioUrl}
+                    hidden
+                />
+            ))}
         </section>
     );
+    
+}
+
+// Helper function to format time (seconds)
+function formatTime(seconds: number) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60)
+        .toString()
+        .padStart(2, "0");
+    return `${minutes}:${remainingSeconds}`;
 }

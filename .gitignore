@@ -1,3 +1,6 @@
 uploads/
-backend/__pycache__
+__pycache__/
+venv/
+*.wav
+*.mp3
 venv/

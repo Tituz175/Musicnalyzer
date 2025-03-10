@@ -1,4 +1,4 @@
-#!/home/tobi/Documents/software_engineering/nmhu/ssd/Musicnalyzer/backend/venv/bin/python3
+#!/home/tobi/Documents/software_engineering/ssd/Musicnalyzer/backend/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

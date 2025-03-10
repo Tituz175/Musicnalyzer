@@ -1,7 +1,42 @@
+/**
+ * Home component to render the landing page of the application.
+ *
+ * This component displays a full-page background image and several sections describing the application's features,
+ * benefits, and purpose. It includes navigation to the upload page for starting the analysis process.
+ *
+ * Components:
+ * - `NavBar`: The top navigation bar displayed throughout the application.
+ * - `Footer`: The bottom footer component, shown on all pages.
+ * - `Card`: Reusable component to showcase key features such as "Vocal Part and Instrument Extraction" and "Key and Tempo Analysis".
+ *
+ * Layout Sections:
+ * 1. Main Hero Section:
+ *    - Background image with overlay text and a call-to-action button ("Analyze") that navigates to the upload page.
+ * 2. About Section:
+ *    - Provides an overview of the app's purpose and how it aids musicians, vocalists, and enthusiasts.
+ * 3. Features Section:
+ *    - Highlights key functionalities with descriptions, each represented by a Card component.
+ * 4. Call-to-Action Section:
+ *    - Encourages users to begin using the app for music analysis and customization, with an additional button to navigate to the upload page.
+ *
+ * Usage:
+ * ```
+ * <Home />
+ * ```
+ *
+ * @returns {JSX.Element} The rendered Home component.
+ */
+
+"use client";
+
 import Card from "@/components/Card";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+
+  const router = useRouter();
+
   return (
     <>
     <div
@@ -25,7 +60,9 @@ export default function Home() {
             Deconstruct your music into its individual components, unlock the
             hidden layers of your favorite songs.
           </p>
-          <button className='font-extrabold text-3xl bg-accent text-white px-6 py-3.5 rounded-lg w-4/12'>
+          <button onClick={() => {
+                router.push('/upload');
+              }} className='font-extrabold text-3xl bg-accent text-white px-6 py-3.5 rounded-lg w-4/12'>
             Analyze
           </button>
         </div>
@@ -95,7 +132,9 @@ export default function Home() {
               listen to music, experience it. Start Analyzing Now and take your
               music journey to the next level!
             </p>
-            <button className='bg-foreground text-white px-6 py-2.5 rounded-lg font-extrabold w-3/12 text-2xl hover:bg-accent transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 mt-4'>
+            <button onClick={() => {
+                router.push('/upload');
+              }} className='bg-foreground text-white px-6 py-2.5 rounded-lg font-extrabold w-3/12 text-2xl hover:bg-accent transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 mt-4'>
               Analyze
             </button>
           </div>
