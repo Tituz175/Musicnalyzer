@@ -2,17 +2,18 @@
 
 interface sliderprops {
   volume: number;
+  stem?: string;
   onVolumeChange: (value: number) => void;
   inputValue: string;
 }
 
-const VerticalSlider: React.FC<sliderprops> = ({ volume, onVolumeChange, inputValue }) => {
+const VerticalSlider: React.FC<sliderprops> = ({ volume, stem, onVolumeChange, inputValue }) => {
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onVolumeChange(Number(e.target.value));
   };
 
   return (
-    <div className="slider-container">
+    <div className={`slider-container flex ${stem == "" ? "hidden" : ""}`}>
       <div className="value-display" id='rangeValue'>
         {(volume * 100).toFixed(0)}%
       </div>
@@ -21,7 +22,7 @@ const VerticalSlider: React.FC<sliderprops> = ({ volume, onVolumeChange, inputVa
         className="range vertical"
         value={volume}
         id="volume"
-        min="0"
+        min="0.004"
         step="0.01"
         max="1"
         onChange={handleVolumeChange}

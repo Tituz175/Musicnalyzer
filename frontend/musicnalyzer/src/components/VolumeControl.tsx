@@ -27,7 +27,7 @@ export default function VolumeControl({
         volume={volume.soprano}
         stem={stemsUrl.soprano}
         onVolumeChange={(value) => onVolumeChange("soprano", value)}
-        inputValue={stemsUrl.alto && stemsUrl.tenor ? "Soprano" : "Vocals"}
+        inputValue={stemsUrl.alto == "" ? "Vocals" : "Soprano"}
       />
       <VerticalSlider
         volume={volume.alto}
