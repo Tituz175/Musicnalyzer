@@ -37,7 +37,6 @@
 
 
 import { useRef, useEffect, useState, useMemo } from "react";
-import Waveform from "@/components/Waveform";
 
 interface AudioPlayerProps {
     audioStemsObj: Record<string, string>; // Array of audio stem URLs for multi-stem audio
@@ -189,8 +188,21 @@ export default function AudioPlayer({
     return (
         <section className='mt-10 py-6'>
             {/* Styled range slider */}
-            <Waveform audioUrl={audioStemsObj[selectedStem]} currentTime={currentTime} duration={duration} />
-
+            <input
+                type='range'
+                min='0'
+                max={maxDuration}
+                value={currentTime}
+                onChange={handleSliderChange}
+                style={{
+                    width: "100%",
+                    appearance: "none",
+                    background: "linear-gradient(90deg, #DE7456 " + (currentTime / maxDuration) * 100 + "%, #ddd " + (currentTime / maxDuration) * 100 + "%)",
+                    height: "auto",
+                    // boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.2)"
+                }}
+                className='w-full cursor-pointer range'
+            />
     
             <div className='text-lg mt-4 flex items-center justify-between text-center space-x-4 font-semibold'>
                 <span className=''>{formatTime(currentTime)}</span>

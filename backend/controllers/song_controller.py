@@ -95,7 +95,7 @@ class SongController:
         """
         return self.song_model.update_song(song_id, song_obj)
     
-    def insert_song(self, app, file, is_solo, artist, duration, lyrics):
+    def insert_song(self, app, file, is_solo, artist, duration, lyrics=""):
         """
         Insert a new song into the database, saving the audio file and metadata.
 
@@ -118,11 +118,18 @@ class SongController:
         file_extension = os.path.splitext(original_filename)[1].lower()
         wav_filename = f"{file_base_name}.wav"
 
+        print(f"Processing file: {file.filename}")
+
         # Check if song exists
         existing_song = self.song_model.find_song_by_name(original_filename)
+
+        print(f"Existing song: {existing_song}")
+
         song_id = str(existing_song["_id"]) if existing_song else str(ObjectId())
         song_folder = os.path.join(app.config["UPLOAD_FOLDER"], song_id)
         os.makedirs(song_folder, exist_ok=True)
+
+        print(f"Original filename: {original_filename}")
 
         # Check for existing files
         existing_files = [file for file in os.listdir(song_folder) if file.startswith(file_base_name) and file.endswith('.wav')]
@@ -130,10 +137,14 @@ class SongController:
         if not existing_files:
             file_path = save_song_file(file, song_folder, wav_filename, file_extension)
 
+            print(f"WAV file saved: {wav_filename}, {file_path}")
+
             # Analyze and extract parts
             key, bpm, soprano, alto, tenor, instrumental, modified_file_path = analyze_and_process_audio(
                 file_path, file_base_name, song_folder, is_solo
             )
+
+            print(f"Modified file path: {modified_file_path}")
 
             # Prepare data for database
             song_data = {
@@ -295,14 +306,27 @@ class SongController:
             if lyrics:
                 return {"lyrics": lyrics}
 
-            # Extract lyrics from audio if not already present
-            soprano_path = song_details["musical_parts"]["soprano_path"]
-            lyrics = extract_lyrics(soprano_path)
-            
+            # Validate that musical_parts and soprano_path exist
+            musical_parts = song_details.get("musical_parts", {})
+            soprano_path = musical_parts.get("soprano_path")
+
+            if not soprano_path:
+                return {"error": "Soprano path missing for this song"}, 400
+
+            # Extract lyrics from audio
+            try:
+                lyrics = extract_lyrics(soprano_path)
+            except Exception as e:
+                return {"error": f"Lyrics extraction failed: {str(e)}"}, 500
+
             # Update the database with extracted lyrics
-            self.update_song_by_id(song_id, {"lyrics": lyrics})
+            try:
+                self.update_song_by_id(song_id, {"lyrics": lyrics})
+            except Exception as e:
+                return {"error": f"Failed to update lyrics: {str(e)}"}, 500
 
             return {"lyrics": lyrics}
+
         except Exception as e:
             print(f"Error getting lyrics: {e}")
             return {"error": str(e)}, 500

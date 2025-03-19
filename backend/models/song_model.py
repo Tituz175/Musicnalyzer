@@ -40,6 +40,7 @@ class SongModel:
         Returns:
             dict: Song document if found, or None if no song matches the name.
         """
+        print(f"Searching for song: {song_name}")
         return self.mongo.db.songs.find_one({"song": song_name})
 
     def find_song(self, song_id):
@@ -88,4 +89,16 @@ class SongModel:
         Returns:
             UpdateResult: Result object indicating the outcome of the update operation.
         """
-        return self.mongo.db.songs.update_one({"_id": song_id}, {"$set": song_data})
+        try:
+            object_id = ObjectId(song_id)  # Ensure ID is in ObjectId format
+        except Exception:
+            return {"error": "Invalid song ID format"}
+
+        result = self.mongo.db.songs.update_one({"_id": object_id}, {"$set": song_data})
+
+        if result.matched_count == 0:
+            return {"error": "Song not found"}
+        if result.modified_count == 0:
+            return {"message": "No changes made, lyrics might be the same"}
+
+        return {"message": "Lyrics updated successfully"}

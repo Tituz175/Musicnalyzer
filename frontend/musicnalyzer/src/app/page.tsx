@@ -103,17 +103,17 @@ export default function Home() {
         </h2>
         <div className='flex justify-around'>
           <Card
-            image='/images/card_img.jpeg'
+            image='/images/card_img_1.jpg'
             title='Vocal Part and Instrument Extraction'
             paragraph='Precisely isolate soprano, alto, and tenor parts with the song instrumental. Analyze each vocal line for performance, technique, and harmonic relationships. Practice these parts independently or collaboratively to enhance your skills.'
           />
           <Card
-            image='/images/card_img.jpeg'
+            image='/images/card_img_2.jpg'
             title='Key and Tempo Analysis'
             paragraph="Accurately determine the song's key and tempo, then experiment by transposing it to different keys and adjusting the tempo to match your desired pace or style, allowing you to create unique versions and interpretations of your favorite songs that suit your vocal range or instrument."
           />
           <Card
-            image='/images/card_img.jpeg'
+            image='/images/card_img_3.jpeg'
             title='Lyrics in Multiple Languages'
             paragraph='Precisely isolate soprano, alto, and tenor parts with the song instrumental. Analyze each vocal line for performance, technique, and harmonic relationships. Practice these parts independently or collaboratively to enhance your skills.'
           />
@@ -139,7 +139,7 @@ export default function Home() {
             </button>
           </div>
           <div className="w-2/5 overflow-hidden rounded-xl">
-            <Image src="/images/card_img.jpeg" alt="card" width="896" height="1152" className="w-full h-full object-cover"/>
+            <Image src="/images/card_img_4.jpg" alt="card" width="896" height="1152" className="w-full h-full object-cover"/>
           </div>
         </div>
       </section>

@@ -39,7 +39,7 @@ export default function Card( {image, title, paragraph }: CardProps) {
     <div className="w-full bg-white border border-tertiary rounded-xl shadow-md overflow-hidden" style={{
       maxWidth: "24.5rem"
     }}>
-      <div className="w-full h-64">
+      <div className="w-full h-80">
         <Image
           src={image}
           alt="card image"
