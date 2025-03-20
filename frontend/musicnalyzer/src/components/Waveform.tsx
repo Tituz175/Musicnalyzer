@@ -1,157 +1,89 @@
-import { useRef, useEffect, useState } from "react";
+import WaveSurfer from "wavesurfer.js";
+import { useEffect, useRef, useState } from "react";
 
 interface WaveformProps {
-  audioStems: [string, string][]; // Array of [name, url] for audio stems
+  audioStemsObj: Record<string, string>;
+  isPlaying: boolean;
+  currentTime: number;
+  onSeek: (time: number) => void;
 }
 
-export default function Waveform({ audioStems }: WaveformProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [visualizationMode, setVisualizationMode] = useState<"single" | "all">("single");
-  const [selectedStem, setSelectedStem] = useState("soprano");
-  const animationProgress = useRef(0);
-  const animationFrameId = useRef<number | null>(null);
+export default function Waveform({ audioStemsObj, isPlaying, currentTime, onSeek }: WaveformProps) {
+  const [selectedStem, setSelectedStem] = useState<string>("soprano");
+  const waveformRef = useRef<HTMLDivElement>(null);
+  const wavesurferRef = useRef<WaveSurfer | null>(null);
 
-  const drawWaveform = async (mode: "single" | "all", animate = false) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const width = canvas.offsetWidth * dpr;
-    const height = canvas.offsetHeight * dpr;
-
-    canvas.width = width;
-    canvas.height = height;
-
-    if (animate) {
-      animationProgress.current = 0; // Reset animation progress
-      animateWaveform(ctx, mode, width, height);
-    } else {
-      ctx.clearRect(0, 0, width, height);
-      await draw(ctx, mode, width, height, 1); // Render final state
-    }
-  };
-
-  const animateWaveform = (
-    ctx: CanvasRenderingContext2D,
-    mode: "single" | "all",
-    width: number,
-    height: number
-  ) => {
-    const step = 0.05; // Animation increment
-
-    const render = async () => {
-      if (animationProgress.current < 1) {
-        animationProgress.current += step;
-        ctx.clearRect(0, 0, width, height);
-        await draw(ctx, mode, width, height, animationProgress.current);
-        animationFrameId.current = requestAnimationFrame(render);
-      } else {
-        // Complete animation and render final state
-        ctx.clearRect(0, 0, width, height);
-        await draw(ctx, mode, width, height, 1);
-        cancelAnimationFrame(animationFrameId.current!);
-      }
-    };
-
-    render();
-  };
-
-  const draw = async (
-    ctx: CanvasRenderingContext2D,
-    mode: "single" | "all",
-    width: number,
-    height: number,
-    opacity: number
-  ) => {
-    ctx.save();
-    ctx.globalAlpha = opacity;
-
-    if (mode === "single") {
-      const stemIndex = audioStems.findIndex(([name]) => name === selectedStem);
-      if (stemIndex !== -1) {
-        await drawAudio(audioStems[stemIndex][1], ctx, width, height);
-      }
-    } else {
-      const combinedWaveform = await combineWaveforms(audioStems.map(([, url]) => url));
-      drawCombinedWaveform(combinedWaveform, ctx, width, height);
-    }
-
-    ctx.restore();
-  };
-
-  const combineWaveforms = async (urls: string[]) => {
-    // Combine waveforms logic (same as before)
-  };
-
-  const drawAudio = async (
-    url: string,
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ) => {
-    // Fetch audio and draw single waveform (same as before)
-  };
-
-  const drawCombinedWaveform = (
-    data: number[],
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ) => {
-    ctx.beginPath();
-    ctx.moveTo(0, height / 2);
-    data.forEach((value, i) => {
-      const x = (i / data.length) * width;
-      const y = (1 - value) * height * 0.5;
-      ctx.lineTo(x, y);
-    });
-    ctx.strokeStyle = "#DE7456";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedStem(event.target.value);
   };
 
   useEffect(() => {
-    const renderWaveform = async () => {
-      await drawWaveform(visualizationMode, true); // Enable animation
-    };
-    renderWaveform();
+    if (!waveformRef.current || !audioStemsObj[selectedStem]) return;
 
-    // Cleanup animation frame when the component unmounts or dependencies change
-    return () => {
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-    };
-  }, [visualizationMode, selectedStem, audioStems]);
+    if (!wavesurferRef.current) {
+      wavesurferRef.current = WaveSurfer.create({
+        container: waveformRef.current,
+        waveColor: "#aaa",
+        progressColor: "#DE7456",
+        responsive: true,
+        height: 100,
+      });
+
+      wavesurferRef.current.on("seek", (progress) => {
+        const duration = wavesurferRef.current?.getDuration() || 0;
+        onSeek(progress * duration);
+      });
+    }
+
+    // Load new audio without destroying the instance
+    wavesurferRef.current.load(audioStemsObj[selectedStem]);
+
+  }, [audioStemsObj, selectedStem, onSeek]);
+
+  useEffect(() => {
+    if (!wavesurferRef.current) return;
+
+    if (isPlaying) {
+      if (!wavesurferRef.current.isPlaying()) {
+        wavesurferRef.current.play().catch(() => {});
+      }
+    } else {
+      wavesurferRef.current.pause();
+    }
+  }, [isPlaying]);
+
+  // Sync current time
+  useEffect(() => {
+    if (wavesurferRef.current) {
+      wavesurferRef.current.setTime(currentTime);
+    }
+  }, [currentTime]);
 
   return (
-    <>
-      <div className="flex justify-between items-center mb-4 font-secondary font-semibold">
-        <button
-          onClick={() =>
-            setVisualizationMode((prev) => (prev === "single" ? "all" : "single"))
-          }
-          className="bg-accent text-white px-4 py-2 rounded-lg"
+    <div className="relative w-full">
+      {/* Styled Dropdown Box */}
+      <div className="absolute top-[-50px] right-0">
+        <label htmlFor="stem-select" className="text-md font-semibold text-foreground">
+          Select Stem:
+        </label>
+        <select 
+          id="stem-select" 
+          value={selectedStem} 
+          onChange={handleDropdownChange} 
+          className="ml-2 border-2 border-gray-300 rounded-lg px-3 py-1 text-foreground bg-white hover:border-accent focus:outline-none transition-all"
         >
-          {visualizationMode === "single" ? "Show All Stems" : "Show Single Stem"}
-        </button>
-
-        {visualizationMode === "single" && (
-          <select
-            value={selectedStem}
-            onChange={(e) => setSelectedStem(e.target.value)}
-            className="border border-gray-300 px-2 py-1 rounded-lg outline-none"
-          >
-            {audioStems.map(([name]) => (
+          {Object.entries(audioStemsObj)
+            .filter(([_, url]) => url !== "")
+            .map(([name, _]) => (
               <option key={name} value={name}>
                 {name.charAt(0).toUpperCase() + name.slice(1)}
               </option>
             ))}
-          </select>
-        )}
+        </select>
       </div>
-      <canvas ref={canvasRef} className="w-full h-48 bg-gray-100 rounded-t-lg"></canvas>
-    </>
+
+      {/* Waveform */}
+      <div ref={waveformRef} className="w-full min-h-[100px] bg-gray-100 rounded-lg shadow-md" />
+    </div>
   );
 }

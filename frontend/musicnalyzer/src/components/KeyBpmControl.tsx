@@ -14,7 +14,6 @@ interface KeyBpmControlProps {
         newAudioStems: AudioStems,
         options: { newKey?: string; newBPM?: number }
     ) => void;
-    paths: string;
     originalKey: string;
     originalBpm: number;
     stems: AudioStems;
@@ -32,11 +31,13 @@ export default function KeyBpmControl({
     incomingmusicalKey,
     incomingbpm,
     onKeyChange,
-    paths,
     originalKey,
     originalBpm,
     stems
 }: KeyBpmControlProps) {
+
+    console.log(stems);
+
     const [songId, setSongId] = useState<string | null>(null);
     const [musicalKey, setMusicalKey] = useState(incomingmusicalKey);
     const [bpm, setBpm] = useState(incomingbpm);

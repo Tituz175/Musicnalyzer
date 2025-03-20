@@ -39,12 +39,13 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import MetadataDisplay from "@/components/MetadataDisplay";
 import KeyBpmControl from "@/components/KeyBpmControl";
 import VolumeControl from "@/components/VolumeControl";
 import LyricsDisplay from "@/components/LyricsDisplay";
 import AudioPlayer from "@/components/AudioPlayer";
+// import Waveform from "@/components/Waveform";
 
 interface SongData {
   title: string;
@@ -72,6 +73,9 @@ interface AudioStems {
 export default function Analyze() {
   const [songData, setSongData] = useState<SongData | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
+  const [currentTime, setCurrentTime] = useState(0);
+  // const waveformRef = useRef(null);
 
   const [stemVolumes, setStemVolumes] = useState({
     soprano: 0.5,
@@ -87,10 +91,7 @@ export default function Analyze() {
     instrumentals: "",
   });
 
-  // const [volume, setVolume] = useState(0.5);
   const [metaDataParsed, setMetaDataParsed] = useState<Metadata | null>(null);
-  // const [audioUrl, setAudioUrl] = useState<string>("");
-  
   const [originalKey, setOriginalKey] = useState<string>("");
   const [originalBpm, setOriginalBpm] = useState<number>(0);
 
@@ -132,12 +133,9 @@ export default function Analyze() {
           const fullTenorUrl = formatUrl(tenor_path);
           const fullInstrumentalUrl = formatUrl(instrumental_path);
 
-          // const vocalUrl = data.musical_parts.soprano_path.replace(/\\/g, "/")
-          // const instrumentalUrl = data.musical_parts.instrumental_path.replace(/\\/g, "/")
           const fullAudioUrl = `http://localhost:5000/${encodeURIComponent(
             data.paths.replace(/\\/g, "/")
           )}`;
-          // const fullVocalUrl = http://localhost:5000/${encodeURIComponent(vocalUrl)};
 
           localStorage.setItem(
             "originalStem",
@@ -199,10 +197,6 @@ export default function Analyze() {
     const fullTenorUrl = newAudioStems.tenor ? formatUrl(newAudioStems.tenor) : null;
     const fullInstrumentalUrl = formatUrl(newAudioStems.instrumentals);
 
-    // const fullVocalUrl = http://localhost:5000/${newAudioStems.soprano};
-    // const fullInstrumentalUrl = http://localhost:5000/${newAudioStems.instrumentals};
-    // const fullAudioUrl = http://localhost:5000/${newAudioPath};
-    // console.log(This is the new path: ${fullAudioUrl});
     setSongData((prevData) => {
       if (!prevData) return null;
 
@@ -219,15 +213,12 @@ export default function Analyze() {
         song_tempo: newBPM ?? prevData.song_tempo,
       };
     }); // Update song data and audio URL
-    // setAudioUrl(fullAudioUrl);
     setStemAudioUrls({
       soprano: fullSopranoUrl ? fullSopranoUrl : "",
       alto: fullAltoUrl ? fullAltoUrl : "",
       tenor: fullTenorUrl ? fullTenorUrl : "",
       instrumentals: fullInstrumentalUrl ? fullInstrumentalUrl : "",
     })
-    // setAudioStem([fullVocalUrl, fullInstrumentalUrl]);
-    // setAudioUrl(fullAudioUrl); // Update audio URL
   };
 
   const handleVolumeChange = (stem: string, value: number) => {
@@ -236,6 +227,12 @@ export default function Analyze() {
       [stem]: value,
     }));
   };
+
+  const handleSeek = (time: number) => {
+    setCurrentTime(time);
+  };
+
+  
 
   return (
     <div className='px-4 sm:px-8 md:px-16 lg:px-60 text-foreground'>
@@ -248,7 +245,7 @@ export default function Analyze() {
           <KeyBpmControl
             incomingmusicalKey={songData?.musical_key || ""}
             incomingbpm={songData?.song_tempo || ""}
-            paths={songData?.paths || ""}
+            // paths={songData?.paths || ""}
             stems={songData?.stems || ""}
             onKeyChange={handleKeyChange}
             originalKey={originalKey}
@@ -262,8 +259,13 @@ export default function Analyze() {
         </div>
         <LyricsDisplay lyrics={songData?.lyrics || ""} />
       </section>
+      {/* <Waveform audioUrl={stemAudioUrls.soprano} audioRef={audioRefs.current[0]} isPlaying={isPlaying} onSeek={handleSeek} /> */}
+
+
+
       <AudioPlayer
         audioStemsObj={stemAudioUrls}
+        audioRefs={audioRefs}
         isPlaying={isPlaying}
         setIsPlaying={setIsPlaying}
         volumes={stemVolumes}

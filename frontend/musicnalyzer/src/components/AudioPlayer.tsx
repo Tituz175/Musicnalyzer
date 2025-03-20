@@ -38,6 +38,8 @@
 
 import { useRef, useEffect, useState, useMemo } from "react";
 
+import Waveform from "@/components/Waveform";
+
 interface AudioPlayerProps {
     audioStemsObj: Record<string, string>; // Array of audio stem URLs for multi-stem audio
     isPlaying: boolean;
@@ -48,6 +50,7 @@ interface AudioPlayerProps {
         tenor: number;
         instrumentals: number;
     };
+    audioRefs: React.MutableRefObject<(HTMLAudioElement | null)[]>;
 }
 
 export default function AudioPlayer({
@@ -55,8 +58,9 @@ export default function AudioPlayer({
     isPlaying,
     setIsPlaying,
     volumes,
+    audioRefs
 }: AudioPlayerProps) {
-    const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
+    // const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
     const [currentTime, setCurrentTime] = useState(0);
     const [durations, setDurations] = useState<number[]>([]); // Store durations of each stem
 
@@ -187,6 +191,18 @@ export default function AudioPlayer({
 
     return (
         <section className='mt-10 py-6'>
+
+            <Waveform
+                audioStemsObj={audioStemsObj} // or whichever stem you want to visualize
+                isPlaying={isPlaying}
+                currentTime={currentTime}
+                onSeek={(time) => {
+                    audioRefs.current.forEach(audio => {
+                    if (audio) audio.currentTime = time;
+                    });
+                    setCurrentTime(time);
+                }}
+            />
             {/* Styled range slider */}
             <input
                 type='range'
