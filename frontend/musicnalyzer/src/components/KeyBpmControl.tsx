@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+const MUSICAL_KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 interface AudioStems {
     soprano: string;
@@ -36,17 +38,30 @@ export default function KeyBpmControl({
     stems
 }: KeyBpmControlProps) {
 
-    console.log(stems);
-
     const [songId, setSongId] = useState<string | null>(null);
     const [musicalKey, setMusicalKey] = useState(incomingmusicalKey);
     const [bpm, setBpm] = useState(incomingbpm);
     const [loading, setLoading] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     useEffect(() => {
         setMusicalKey(incomingmusicalKey);
         setBpm(incomingbpm);
     }, [incomingmusicalKey, incomingbpm]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
 
     useEffect(() => {
         const data = localStorage.getItem("metadata");
@@ -100,11 +115,10 @@ export default function KeyBpmControl({
 
     const handleChange = async (
         type: "key" | "bpm",
-        direction: "plus" | "minus",
-        event: React.MouseEvent
+        value: number,
+        // event: React.MouseEvent
     ) => {
         const url = type === "key" ? "/change_key" : "/change_bpm";
-        const value = direction === "plus" ? 1 : -1;
         // const newBPM = type === "bpm" ? parseInt(bpm) + value : parseInt(bpm);
 
         try {
@@ -122,6 +136,14 @@ export default function KeyBpmControl({
         } catch (error) {
             console.error("Error changing ${type}:", error);
         }
+    };
+
+    const getDynamicKeyList = () => {
+        const index = MUSICAL_KEYS.indexOf(musicalKey);
+        if (index === -1) return MUSICAL_KEYS;
+        const before = MUSICAL_KEYS.slice(0, index);
+        const after = MUSICAL_KEYS.slice(index + 1);
+        return [...after, musicalKey, ...before];
     };
 
     const handleReset = async () => {
@@ -145,23 +167,45 @@ export default function KeyBpmControl({
     return (
         <div className="w-full flex justify-around items-center text-2xl font-semibold py-6 space-x-6">
             {/* Key Control */}
-            <div className="flex flex-col items-center">
+            <div className="relative flex flex-col items-center" ref={dropdownRef}>
                 <h4 className="text-center mb-2">Key</h4>
                 <div className="flex items-center border-2 border-accent rounded-lg overflow-hidden">
-                    <button
-                        className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90"
-                        onClick={(e) => handleChange("key", "minus", e)}
+                    <button className="px-4 py-2" onClick={() => handleChange("key", -1)}>-</button>
+                    <div
+                        className="relative cursor-pointer px-6 py-2 border-x-2 border-accent bg-gray-50"
+                        onClick={() => setDropdownOpen((prev) => !prev)}
                     >
-                        -
-                    </button>
-                    <span className="px-6 py-2 border-x-2 border-accent bg-gray-50">{musicalKey}</span>
-                    <button
-                        className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90"
-                        onClick={(e) => handleChange("key", "plus", e)}
-                    >
-                        +
-                    </button>
+                        {musicalKey}
+                    </div>
+                    <button className="px-4 py-2" onClick={() => handleChange("key", 1)}>+</button>
                 </div>
+                {dropdownOpen && (
+                    <div className="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg mt-1 z-10 max-h-48 overflow-y-auto text-center">
+                        {getDynamicKeyList()
+                        .filter((key) => key !== musicalKey)
+                        .map((key, index) => {
+                            let value = index + 1; // Start from 1
+                                if (value > 6) {
+                                    value = value - 12; // Convert values above 6 to negative shifts
+                                }
+
+                        return (    
+                            <div 
+                                key={key} 
+                                className="px-4 py-2 hover:bg-gray-200 cursor-pointer" 
+                                onClick={() => { 
+                                    console.log(value, key);
+                                    // setMusicalKey(key); 
+                                    handleChange("key", value); // Calculate shift relative to current position
+                                    setDropdownOpen(false); 
+                                }}
+                            >
+                                {key}
+                            </div>
+                        );
+                        })}
+                    </div>
+                )}
             </div>
 
             {/* Reset Button */}
