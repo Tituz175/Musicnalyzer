@@ -44,11 +44,17 @@ export default function KeyBpmControl({
     const [loading, setLoading] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const [tempBpm, setTempBpm] = useState(bpm);
+
 
     useEffect(() => {
         setMusicalKey(incomingmusicalKey);
         setBpm(incomingbpm);
     }, [incomingmusicalKey, incomingbpm]);
+
+    useEffect(() => {
+        setTempBpm(bpm);
+    }, [bpm]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -146,6 +152,21 @@ export default function KeyBpmControl({
         return [...after, musicalKey, ...before];
     };
 
+    const handleBpmInputChange = async () => {
+        const parsedTemp = parseInt(tempBpm);
+        const parsedCurrent = parseInt(bpm);
+    
+        if (!isNaN(parsedTemp) && parsedTemp !== parsedCurrent) {
+            const diff = parsedTemp - parsedCurrent;
+    
+            await handleChange("bpm", diff);
+        } else {
+            // Reset tempBpm if invalid or unchanged
+            setTempBpm(bpm);
+        }
+    };
+    
+
     const handleReset = async () => {
         const stem = localStorage.getItem("originalStem");
         const originalStems = stem ? JSON.parse(stem) : null
@@ -224,14 +245,25 @@ export default function KeyBpmControl({
                 <div className="flex items-center border-2 border-accent rounded-lg overflow-hidden">
                     <button
                         className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90"
-                        onClick={(e) => handleChange("bpm", "minus", e)}
+                        onClick={() => handleChange("bpm", -1)}
                     >
                         -
                     </button>
-                    <span className="px-6 py-2 border-x-2 border-accent bg-gray-50">{bpm}</span>
+                    <input
+                        type="number"
+                        className="px-4 py-2 text-center border-x-2 border-accent bg-gray-50 w-20 hover:appearance-none focus:outline-none"
+                        value={tempBpm}
+                        onChange={(e) => setTempBpm(e.target.value)}
+                        onBlur={handleBpmInputChange}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                (e.target as HTMLInputElement).blur(); // Triggers onBlur handler
+                            }
+                        }}
+                    />
                     <button
                         className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90"
-                        onClick={(e) => handleChange("bpm", "plus", e)}
+                        onClick={() => handleChange("bpm", 1)}
                     >
                         +
                     </button>
