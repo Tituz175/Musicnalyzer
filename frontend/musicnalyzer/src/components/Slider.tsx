@@ -27,7 +27,7 @@ const VerticalSlider: React.FC<sliderprops> = ({ volume, stem, onVolumeChange, i
         max="1"
         onChange={handleVolumeChange}
       />
-      <div className="slider-title">
+      <div className="slider-title font-bold">
         {inputValue}
       </div>
     </div>

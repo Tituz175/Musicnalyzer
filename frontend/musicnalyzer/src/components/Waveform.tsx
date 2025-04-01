@@ -45,7 +45,7 @@ export default function Waveform({ audioStemsObj, isPlaying, currentTime, onSeek
 
     if (isPlaying) {
       if (!wavesurferRef.current.isPlaying()) {
-        wavesurferRef.current.play().catch(() => {});
+        wavesurferRef.current.play().catch(() => { });
       }
     } else {
       wavesurferRef.current.pause();
@@ -66,19 +66,27 @@ export default function Waveform({ audioStemsObj, isPlaying, currentTime, onSeek
         <label htmlFor="stem-select" className="text-md font-semibold text-foreground">
           Select Stem:
         </label>
-        <select 
-          id="stem-select" 
-          value={selectedStem} 
-          onChange={handleDropdownChange} 
+        <select
+          id="stem-select"
+          value={selectedStem}
+          onChange={handleDropdownChange}
           className="ml-2 border-2 border-gray-300 rounded-lg px-3 py-1 text-foreground bg-white hover:border-accent focus:outline-none transition-all"
         >
           {Object.entries(audioStemsObj)
             .filter(([_, url]) => url !== "")
-            .map(([name, _]) => (
-              <option key={name} value={name}>
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </option>
-            ))}
+            .map(([name, _]) => {
+              let listName = name;
+              if (name == "soprano" && [].length > 2) {
+                listName = "vocal";
+              }
+              return (
+                <option key={name} value={name}>
+                  {listName.charAt(0).toUpperCase() + listName.slice(1)}
+                </option>
+              );
+            })
+          }
+            
         </select>
       </div>
 

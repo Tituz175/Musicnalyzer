@@ -251,7 +251,7 @@ export default function KeyBpmControl({
                     </button>
                     <input
                         type="number"
-                        className="px-4 py-2 text-center border-x-2 border-accent bg-gray-50 w-20 hover:appearance-none focus:outline-none"
+                        className="px-4 py-2 text-center border-x-2 border-accent bg-gray-50 w-20 focus:outline-none"
                         value={tempBpm}
                         onChange={(e) => setTempBpm(e.target.value)}
                         onBlur={handleBpmInputChange}
