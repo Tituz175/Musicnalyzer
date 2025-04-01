@@ -38,6 +38,7 @@ export default function Upload() {
         height: "88.8vh",
       }}
     >
+    
       <div className='bg-tertiary w-4/12 h-6/12 rounded-lg mb-4 py-10 px-14 flex flex-col justify-between'>
         <div className='flex items-center'>
           <div className=''>

@@ -191,14 +191,14 @@ export default function KeyBpmControl({
             <div className="relative flex flex-col items-center" ref={dropdownRef}>
                 <h4 className="text-center mb-2">Key</h4>
                 <div className="flex items-center border-2 border-accent rounded-lg overflow-hidden">
-                    <button className="px-4 py-2" onClick={() => handleChange("key", -1)}>-</button>
+                    <button className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90" onClick={() => handleChange("key", -1)}>-</button>
                     <div
                         className="relative cursor-pointer px-6 py-2 border-x-2 border-accent bg-gray-50"
                         onClick={() => setDropdownOpen((prev) => !prev)}
                     >
                         {musicalKey}
                     </div>
-                    <button className="px-4 py-2" onClick={() => handleChange("key", 1)}>+</button>
+                    <button className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90" onClick={() => handleChange("key", 1)}>+</button>
                 </div>
                 {dropdownOpen && (
                     <div className="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg mt-1 z-10 max-h-48 overflow-y-auto text-center">

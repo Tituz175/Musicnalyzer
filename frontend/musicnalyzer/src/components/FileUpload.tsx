@@ -33,9 +33,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { parseBlob } from "music-metadata-browser";
+import { io } from "socket.io-client"; 
 import { ClipLoader } from "react-spinners";
 
 interface UploadStatus {
@@ -50,15 +51,40 @@ export default function FileUpload() {
     status: false,
     message: "",
   });
+  const [progress, setProgress] = useState(0);  // Track upload progress
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
+
+  // Initialize Socket.IO connection
+  useEffect(() => {
+    const socket = io("http://localhost:5000");  // Connect to backend
+
+    socket.on("connect", () => {
+      console.log("Connected to WebSocket!");
+    });
+
+    // Listen for "progress" events
+    socket.on("progress", (percent: number) => {
+      console.log("Got progress update:", percent);
+      setProgress(percent);
+      // console.log("Progress:", progress);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from WebSocket.");
+    });
+
+    return () => {
+      socket.disconnect(); // Cleanup when component unmounts
+    };
+  }, []);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0] || null;
     setUploadedFile(file);
+    setProgress(0); // Reset progress on new file selection
 
     if (!file) return;
 
@@ -110,7 +136,7 @@ export default function FileUpload() {
   };
 
   const handleUploadSuccess = (data: any, metadata: any) => {
-    setUploadStatus({ status: true, message: "File uploaded successfully!" });
+    setUploadStatus({ status: true, message: "Analysis Finished!" });
     const songMetadata = {
       title: metadata?.title || "Unknown Title",
       artist: metadata?.artist || "Unknown Artist",
@@ -188,9 +214,26 @@ export default function FileUpload() {
       )}
 
       {isLoading ? (
-        <div className='flex justify-center mt-4'>
-          <ClipLoader color='#4A90E2' loading={isLoading} size={35} />
-          <p className='ml-3'>Uploading file...</p>
+        <div className='flex justify-center mt-4 flex-col items-center'>
+          <div className='flex items-center'>
+            <p className='mr-3'>Analyzing</p>
+            <ClipLoader color='#4A90E2' loading={isLoading} size={25} />
+            {/* console.log(progress) */}
+          </div>
+          {/* Progress Bar */}
+          {/* Progress Bar */}
+          {progress > 0 && (
+            <div className="w-full bg-gray-300 rounded-full h-5 mt-4 relative overflow-hidden border border-accent">
+              <div
+                className="h-full bg-gradient-to-r from-[#DE745544] to-accent rounded-full animate-pulse transition-all duration-500 ease-in-out"
+                style={{ width: `${progress}%` }}
+              ></div>
+              <span className="absolute inset-0 flex items-center justify-center text-md font-semibold text-white">
+                {progress}%
+              </span>
+            </div>
+          )}
+
         </div>
       ) : (
         <p className='text-center mt-4'>{uploadStatus.message}</p>
@@ -199,13 +242,13 @@ export default function FileUpload() {
       <div className='flex justify-center mt-4'>
         <button
           className={`text-lg py-3 px-6 border-0 rounded-md font-bold transition-all duration-500 ease-in-out ${uploadedFile && uploadStatus.status
-              ? "bg-foreground text-white hover:bg-accent"
-              : "bg-gray-400 text-gray-200 cursor-not-allowed"
+            ? "bg-foreground text-white hover:bg-accent"
+            : "bg-gray-400 text-gray-200 cursor-not-allowed"
             }`}
           disabled={!uploadedFile || !uploadStatus.status || isLoading}
           onClick={() => uploadedFile && router.push("/analyze")}
         >
-          Analyze
+          {isLoading ? "Analyzing..." : "Proceed to Analysis"}
         </button>
       </div>
     </div>

@@ -17,10 +17,12 @@ Dependencies:
 """
 
 import os
+import time
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 from controllers.song_controller import SongController 
+from flask_socketio import SocketIO, emit
 
 # Application configuration
 app = Flask(__name__)
@@ -30,6 +32,7 @@ app.config["ALLOWED_EXTENSIONS"] = {"mp3", "wav"}  # Allow both mp3 and wav
 mongo = PyMongo(app)
 app.config['mongo'] = mongo
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 
 # Initialize application controller
 song_controller = SongController(mongo)
@@ -50,15 +53,47 @@ def insert_song():
     Returns:
         Response: JSON response indicating success or failure of the operation.
     """
+
+
+    # file = request.files["file"]
+    # print("File received:", file.filename)
+
+    # socketio.emit("progress", 10)
+    # print("Emitted progress 10")
+
+    # Simulate file processing
+    # for i in [20, 50, 80, 100]:
+    #     socketio.sleep(2)
+        
+    #     socketio.emit("progress", i)
+    #     print(f"Emitted progress {i}")
+
+
+    # return jsonify({"message": "File uploaded successfully"})
+
+
     file = request.files.get('file')
     if not file or file.filename == '':
         return jsonify({"error": "No selected file"}), 400
+    
+    # socketio.emit("progress", 10)
+    # print("Emitted progress 10")
 
     is_solo = request.form.get('isSolo').capitalize()
     artist = request.form.get('artist', "")
     duration = request.form.get('duration', "0")
 
-    response = song_controller.insert_song(app, file, is_solo, artist, duration)
+    
+    # print("Socket: ", socketio.emit("progress", 10))
+    # time.sleep(2)
+
+    # socketio.emit("progress", 30)
+    # print("Emitted progress 30")
+
+    response = song_controller.insert_song(app, socketio, emit, file, is_solo, artist, duration)
+
+    # socketio.emit("progress", 100)
+    # print("Emitted progress 100")
     return jsonify(response), response.get("status_code", 200)
 
 
@@ -180,5 +215,4 @@ def get_lyrics():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

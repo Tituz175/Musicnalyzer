@@ -15,6 +15,7 @@ Dependencies:
 
 import os
 import json
+import time
 from bson import ObjectId
 from models.song_model import SongModel
 from werkzeug.utils import secure_filename
@@ -95,7 +96,7 @@ class SongController:
         """
         return self.song_model.update_song(song_id, song_obj)
     
-    def insert_song(self, app, file, is_solo, artist, duration, lyrics=""):
+    def insert_song(self, app, socketio, emit, file, is_solo, artist, duration, lyrics=""):
         """
         Insert a new song into the database, saving the audio file and metadata.
 
@@ -110,8 +111,12 @@ class SongController:
         Returns:
             dict: JSON response with song ID and success or error message, including status code.
         """
+
         if not allowed_file(file.filename):
             return {"error": "File type not allowed", "status_code": 400}
+        
+        socketio.emit("progress", 10)
+        print("Emitted progress 10")
 
         original_filename = secure_filename(file.filename)
         file_base_name = os.path.splitext(original_filename)[0]
@@ -119,6 +124,10 @@ class SongController:
         wav_filename = f"{file_base_name}.wav"
 
         print(f"Processing file: {file.filename}")
+
+        # Emit progress message to the client
+        socketio.emit("progress", 20)
+        print("Emitted progress 20")
 
         # Check if song exists
         existing_song = self.song_model.find_song_by_name(original_filename)
@@ -130,6 +139,9 @@ class SongController:
         os.makedirs(song_folder, exist_ok=True)
 
         print(f"Original filename: {original_filename}")
+
+        socketio.emit("progress", 50)
+        print("Emitted progress 50")
 
         # Check for existing files
         existing_files = [file for file in os.listdir(song_folder) if file.startswith(file_base_name) and file.endswith('.wav')]
@@ -145,6 +157,9 @@ class SongController:
             )
 
             print(f"Modified file path: {modified_file_path}")
+
+            socketio.emit("progress", 75)
+            print("Emitted progress 75")
 
             # Prepare data for database
             song_data = {
@@ -164,6 +179,9 @@ class SongController:
                 }
             }
 
+            socketio.emit("progress", 85)
+            print("Emitted progress 85")
+
             # Insert/update in database
             if existing_song:
                 self.song_model.update_song(existing_song["_id"], song_data)
@@ -172,6 +190,8 @@ class SongController:
                 self.song_model.insert_song(song_data)
                 message = "Song uploaded and database entry created"
 
+            socketio.emit("progress", 100)
+            print("Emitted progress 100")
             return {"status": message, "song_id": song_id, "status_code": 200}
         else:
             return {"message": "Song file already exists on the server, upload skipped", "song_id": song_id, "status_code": 200}
