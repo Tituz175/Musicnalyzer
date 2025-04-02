@@ -31,6 +31,9 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+body::-webkit-scrollbar {
+  display: none; /* Hide the scrollbar in WebKit browsers */
+}
 
 @layer utilities {
   .text-balance {
