@@ -186,14 +186,20 @@ export default function KeyBpmControl({
     const showResetButton = musicalKey !== originalKey || parseInt(bpm) !== originalBpm;
 
     return (
-        <div className="w-full flex justify-around items-center text-2xl font-semibold py-6 space-x-6">
+        <div className="
+        max-lg:space-x-2 max-lg:py-2
+        w-full flex justify-around items-center text-2xl font-semibold py-6 space-x-6">
             {/* Key Control */}
             <div className="relative flex flex-col items-center" ref={dropdownRef}>
-                <h4 className="text-center mb-2">Key</h4>
+                <h4 className="
+                max-lg:text-lg max-lg:font-bold
+                text-center mb-2">Key</h4>
                 <div className="flex items-center border-2 border-accent rounded-lg overflow-hidden">
                     <button className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90" onClick={() => handleChange("key", -1)}>-</button>
                     <div
-                        className="relative cursor-pointer px-6 py-2 border-x-2 border-accent bg-gray-50"
+                        className="
+                        max-lg:text-lg max-lg:font-bold max-lg:px-3 max-lg:py-0.5
+                        relative cursor-pointer px-6 py-2 border-x-2 border-accent bg-gray-50"
                         onClick={() => setDropdownOpen((prev) => !prev)}
                     >
                         {musicalKey}

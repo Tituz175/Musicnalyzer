@@ -235,41 +235,51 @@ export default function Analyze() {
   
 
   return (
-    <div className='px-4 sm:px-8 md:px-16 lg:px-60 text-foreground'>
+    <div className='px-4 xxs:px-6 xxs:py-0 xxs:my-3 md:px-14 lg:px-60 my-14 lg:py-14 text-foreground'>
       <MetadataDisplay
         title={metaDataParsed?.title || "Unknown Title"}
         artist={metaDataParsed?.artist || "Unknown Artist"}
       />
-      <section className='flex items-center justify-between w-full font-secondary'>
-        <div className='w-2/5 flex flex-col items-center justify-center p-10'>
-          <KeyBpmControl
-            incomingmusicalKey={songData?.musical_key || ""}
-            incomingbpm={songData?.song_tempo || ""}
-            // paths={songData?.paths || ""}
-            stems={songData?.stems || ""}
-            onKeyChange={handleKeyChange}
-            originalKey={originalKey}
-            originalBpm={originalBpm}
-          />
-          <VolumeControl
-            volume={stemVolumes}
-            onVolumeChange={handleVolumeChange}
-            stemsUrl={stemAudioUrls}
-          />
+      <section className='
+      xxs:flex-col-reverse
+      lg:flex-col
+      flex items-center flex-col justify-between w-full font-secondary'>
+        <div className="
+        xxs:flex-col
+        lg:flex-row
+        flex w-full justify-between">
+          <div className='
+          max-lg:w-full max-lg:p-2
+          w-2/5 flex flex-col items-center justify-center p-10'>
+            <KeyBpmControl
+              incomingmusicalKey={songData?.musical_key || ""}
+              incomingbpm={songData?.song_tempo || ""}
+              // paths={songData?.paths || ""}
+              stems={songData?.stems || ""}
+              onKeyChange={handleKeyChange}
+              originalKey={originalKey}
+              originalBpm={originalBpm}
+            />
+            <VolumeControl
+              volume={stemVolumes}
+              onVolumeChange={handleVolumeChange}
+              stemsUrl={stemAudioUrls}
+            />
+          </div>
+          <LyricsDisplay lyrics={songData?.lyrics || ""} />
         </div>
-        <LyricsDisplay lyrics={songData?.lyrics || ""} />
+
+        <div className="w-full">
+        <AudioPlayer
+          audioStemsObj={stemAudioUrls}
+          audioRefs={audioRefs}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          volumes={stemVolumes}
+        />
+        </div>
       </section>
       {/* <Waveform audioUrl={stemAudioUrls.soprano} audioRef={audioRefs.current[0]} isPlaying={isPlaying} onSeek={handleSeek} /> */}
-
-
-
-      <AudioPlayer
-        audioStemsObj={stemAudioUrls}
-        audioRefs={audioRefs}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-        volumes={stemVolumes}
-      />
     </div>
   );
 }

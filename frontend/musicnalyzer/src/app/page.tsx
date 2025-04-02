@@ -39,41 +39,69 @@ export default function Home() {
 
   return (
     <>
-    <div
-      className='w-full bg-cover bg-center'
-      style={{
-        backgroundImage: "url('/images/main.jpg')",
-        height: "95vh",
-      }}
-    >
-      <main className='h-full w-full flex flex-col gap-8 row-start-2 sm:items-start justify-center'>
-        <div
-          className='w-2/5 h-auto flex flex-col text-white ml-52 px-16 py-16 space-y-16 rounded-xl'
-          style={{
-            background: "#242f3799",
-          }}
-        >
-          <h1 className='font-secondary text-8xl font-bold'>
-            Your Musical Assistant
-          </h1>
-          <p className='text-5xl leading-normal'>
-            Deconstruct your music into its individual components, unlock the
-            hidden layers of your favorite songs.
-          </p>
-          <button onClick={() => {
-                router.push('/upload');
-              }} className='font-extrabold text-3xl bg-accent text-white px-6 py-3.5 rounded-lg w-4/12'>
-            Analyze
-          </button>
-        </div>
-      </main>
+      <div
+        className="w-full bg-cover bg-center h-[95vh] xxs:h-[70vh] md:h-[60vh] lg:h-[95vh] xl:h-[95vh]"
+        style={{
+          backgroundImage: "url('/images/main.jpg')",
+        }}
+      >
+        <main className="
+      xxs:items-center xxs:px-0 px-6
+      md:items-center md:justify-evenly
+      lg:items-start
+      h-full w-full flex flex-col gap-8 justify-center">
+          <div
+            className="
+          xxs:w-full xxs:h-full xxs:mt-0 xxs:mx-0 xxs:rounded-none xxs:px-4 
+          md:py-6 md:space-y-10 
+          lg:px-16 lg:py-16 lg:space-y-16 lg:w-2/5 lg:h-auto lg:rounded-xl lg:ml-52
+          flex flex-col text-white px-8 py-8 space-y-8 rounded-xl ml-52"
+            style={{
+              background: "#242f3799",
+            }}
+          >
+            <h1 className="
+          xxs:text-4xl xxs:text-center
+          md:text-6xl md:my-4 md:mx-20
+          lg:text-left lg:text-8xl lg:m-0
+          font-secondary font-bold">
+              Your Musical Assistant
+            </h1>
+            <p className="
+          xxs:text-2xl xxs:text-center xxs:leading-relaxed
+          md:text-4xl md:mx-14 md:leading-relaxed
+          lg:text-left lg:mx-0 lg:leading-normal lg:text-5xl
+          text-5xl">
+              Deconstruct your music into its individual components, unlock the hidden layers of your favorite songs.
+            </p>
+            <button
+              onClick={() => {
+                router.push("/upload");
+              }}
+              className="
+            xxs:text-xl xxs:w-1/2 max-lg:mx-auto 
+            font-extrabold text-3xl bg-accent text-white px-6 py-3.5 rounded-lg w-full"
+            >
+              Analyze
+            </button>
+          </div>
+        </main>
       </div>
-      <section className='sm:px-8 md:px-16 lg:px-60 my-14 py-14'>
+
+      <section className='xxs:px-6 xxs:py-0 xxs:my-6 md:px-14 lg:px-60 my-14 lg:py-14'>
         <div>
-          <h2 className='font-bold text-accent text-5xl font-secondary pb-6'>
+          <h2 className='
+          xxs:text-xl xxs:pb-2
+          md:text-3xl
+          lg:text-5xl lg:pb-6
+          font-bold text-accent font-secondary'>
             About
           </h2>
-          <p className='text-foreground font-light text-2xl pb-6'>
+          <p className='
+          xxs:text-sm xxs:pb-2 
+          md:text-base
+          lg:text-2xl lg:pb-6
+          text-foreground font-light text-justify'>
             Musicnalyzer is more than just a tool. It&apos;s your musical
             companion, designed to empower vocalists, composers, and music
             enthusiasts by offering a deep dive into the intricacies of your
@@ -82,7 +110,11 @@ export default function Home() {
             instruments while gaining insights into the hidden harmonies,
             rhythms, and melodies that shape your music.
           </p>
-          <p className='text-foreground font-light text-2xl pb-6'>
+          <p className='
+          xxs:text-sm xxs:pb-2 
+          md:text-base
+          lg:text-2xl lg:pb-6
+          text-foreground font-light text-justify'>
             For vocalists, Musicnalyzer is an invaluable resource, allowing you
             to isolate and learn your specific vocal and harmony parts with
             precision. Whether you&apos;re mastering a solo or perfecting group
@@ -90,18 +122,30 @@ export default function Home() {
             nuances of each part, making it easier to practice and perform with
             confidence.
           </p>
-          <p className='text-foreground font-light text-2xl pb-6'>
+          <p className='
+          xxs:text-sm xxs:pb-2 
+          md:text-base
+          lg:text-2xl lg:pb-6
+          text-foreground font-light text-justify'>
             Learn and grow as you improve your musical skills by understanding
             the underlying structure of your favourite pieces, and use these
             insights to master your desired musical tracks.
           </p>
         </div>
       </section>
-      <section className='sm:px-8 md:px-16 lg:px-60 my-14 py-14'>
-        <h2 className='font-bold text-accent text-5xl font-secondary pb-12'>
+
+      <section className='xxs:px-6 xxs:py-0 xxs:my-6 md:px-14 lg:px-60 my-14 lg:py-14'>
+        <h2 className='
+          xxs:text-xl xxs:pb-2
+          md:text-3xl
+          lg:text-5xl lg:pb-8
+          font-bold text-accent font-secondary'>
           Features
         </h2>
-        <div className='flex justify-around'>
+        <div className='
+        xxs:gap-6 xxs:flex-col
+        md:flex-row md:gap-4
+        flex justify-around'>
           <Card
             image='/images/card_img_1.jpg'
             title='Vocal Part and Instrument Extraction'
@@ -119,30 +163,53 @@ export default function Home() {
           />
         </div>
       </section>
-      <section className='sm:px-8 md:px-16 lg:px-60 my-14 py-14'>
-        <div className="flex w-full h-96 justify-between">
-          <div className="w-2/5 flex flex-col justify-between">
-            <h3 className="font-bold text-accent text-4xl font-secondary pb-4 max-w-md">Unleash the Full Potential of Your Music Today!</h3>
-            <p className="font-light text-xl text-foreground prose text-justify">
-              Dive deep into the details of any song, separate vocal parts,
-              isolate instrumental, and even tweak the key and tempo to match
-              your style. Whether you&apos;re a vocalist looking to perfect your
-              craft or a music lover eager to explore, Musicnalyzer is your
-              ultimate tool for music analysis and customization. Don&apos;t just
-              listen to music, experience it. Start Analyzing Now and take your
-              music journey to the next level!
+      <section className="
+      xxs:px-8 xxs:mt-0 xxs:mb-4 xxs:py-0 
+      md:px-14
+      lg:px-60 lg:my-14 lg:py-14">
+        <div className="flex flex-col lg:flex-row lg:items-center w-full justify-between">
+          {/* Left Content */}
+          <div className="
+          xxs:mb-4
+          w-full lg:w-2/5 flex flex-col justify-between mb-8 lg:mb-0">
+            <h3 className="font-bold text-accent text-4xl xxs:text-xl md:text-3xl lg:text-4xl font-secondary pb-4 max-w-md">
+              Unleash the Full Potential of Your Music Today!
+            </h3>
+            <p className="
+            xxs:text-sm 
+            md:text-base 
+            lg:text-xl
+            font-light text-sm text-foreground prose text-justify">
+              Dive deep into the details of any song, separate vocal parts, isolate instrumental, and even tweak the key and tempo to match your style. Whether you're a vocalist looking to perfect your craft or a music lover eager to explore, Musicnalyzer is your ultimate tool for music analysis and customization. Don’t just listen to music, experience it. Start Analyzing Now and take your music journey to the next level!
             </p>
-            <button onClick={() => {
+            <button
+              onClick={() => {
                 router.push('/upload');
-              }} className='bg-foreground text-white px-6 py-2.5 rounded-lg font-extrabold w-3/12 text-2xl hover:bg-accent transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 mt-4'>
+              }}
+              className="
+              xxs:text-base xxs:w-full
+              sm:text-2xl
+              lg:w-3/12
+              bg-foreground text-white px-6 py-2.5 rounded-lg font-extrabold w-full text-xl hover:bg-accent transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 mt-4"
+            >
               Analyze
             </button>
           </div>
-          <div className="w-2/5 overflow-hidden rounded-xl">
-            <Image src="/images/card_img_4.jpg" alt="card" width="896" height="1152" className="w-full h-full object-cover"/>
+
+          {/* Right Image */}
+          <div className="w-full md:h-1/4 lg:w-2/5 overflow-hidden rounded-xl">
+            <Image
+              src="/images/card_img_4.jpg"
+              alt="card"
+              width="896"
+              height="1000"
+              className="w-full h-full md:h-1/4 object-cover"
+            />
           </div>
         </div>
       </section>
+
+
     </>
   );
 }

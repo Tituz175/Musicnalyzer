@@ -190,7 +190,9 @@ export default function AudioPlayer({
     const maxDuration = Math.max(...durations);
 
     return (
-        <section className='mt-10 py-6'>
+        <section className='
+        max-lg:pt-6 max-lg:pb-2 
+        mt-10 py-6'>
 
             <Waveform
                 audioStemsObj={audioStemsObj} // or whichever stem you want to visualize

@@ -39,7 +39,10 @@ export default function Card( {image, title, paragraph }: CardProps) {
     <div className="w-full bg-white border border-tertiary rounded-xl shadow-md overflow-hidden" style={{
       maxWidth: "24.5rem"
     }}>
-      <div className="w-full h-80">
+      <div className="
+      xxs:h-52
+      lg:h-80
+      w-full">
         <Image
           src={image}
           alt="card image"
@@ -49,9 +52,15 @@ export default function Card( {image, title, paragraph }: CardProps) {
         />
       </div>
 
-      <div className="p-4">
-        <h4 className="text-xl font-secondary font-bold text-center">{title}</h4>
-        <p className="mt-2 font-light text-lg text-foreground prose text-justify">{paragraph}</p>
+      <div className="
+      xxs:text-base 
+      md:text-lg
+      lg:text-xl
+      p-4">
+        <h4 className="
+        font-secondary font-bold text-center">{title}</h4>
+        <p className="
+        mt-2 font-light text-foreground prose text-justify">{paragraph}</p>
       </div>
     </div>
   )

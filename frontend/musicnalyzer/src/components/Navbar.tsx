@@ -1,3 +1,29 @@
+/**
+ * NavBar component for navigating between different pages in the application.
+ *
+ * This component provides a responsive navigation bar with links to various pages, including
+ * "Home", "About", "FAQ", and conditional links to "Upload" and "Analyze" based on the current
+ * page. It also includes a mobile-friendly hamburger menu for smaller screens.
+ *
+ * Props: None
+ *
+ * Functional Components:
+ * - `handleNavClick`: Navigates to the specified page and closes the mobile menu after clicking a link.
+ *
+ * Key Features:
+ * - Dynamically highlights the active navigation link based on the current page.
+ * - Includes a hamburger menu for mobile devices, toggling between open and closed states.
+ * - Conditionally renders "Upload" and "Analyze" links based on the current page.
+ * - Uses Next.js `useRouter` and `usePathname` for navigation and current route tracking.
+ *
+ * Usage:
+ * ```
+ * <NavBar />
+ * ```
+ *
+ * @returns {JSX.Element} The rendered NavBar component.
+ */
+
 "use client";
 
 import Link from "next/link";
@@ -25,7 +51,11 @@ export default function NavBar() {
   const isUploadPage = pathname === "/upload";
 
   return (
-    <nav className="bg-secondary font-secondary flex items-center justify-between h-20 px-6 sm:px-6 w-full md:px-20 lg:px-64 text-2xl font-semibold sticky top-0 z-30">
+    <nav className="
+    sm:px-6 
+    md:px-14 
+    xl:px-60
+    w-full bg-secondary font-secondary flex items-center justify-between h-20 px-6 text-2xl font-semibold sticky top-0 z-30">
       {/* Brand Logo */}
       <div className="flex items-center">
         <Link href="/" className="text-4xl font-extrabold">
@@ -35,7 +65,7 @@ export default function NavBar() {
 
       {/* Mobile Menu Toggle Button (☰ → ✖) */}
       <button
-        className="md:hidden text-white text-3xl focus:outline-none z-50"
+        className="lg:hidden text-white text-3xl focus:outline-none z-50"
         onClick={() => setMenuOpen(!menuOpen)}
       >
         {menuOpen ? "✖" : "☰"}
@@ -43,11 +73,11 @@ export default function NavBar() {
 
       {/* Navigation Links & Analyze Button */}
       <div
-        className={`fixed inset-0 bg-secondary bg-opacity-95 flex flex-col items-center justify-center transition-all duration-300 md:static md:flex-row md:items-center md:gap-16 ${
+        className={`fixed inset-0 bg-secondary bg-opacity-95 flex flex-col items-center justify-center transition-all duration-300 lg:static lg:flex-row lg:items-center lg:gap-16 ${
           menuOpen ? "flex" : "hidden"
-        } md:flex`}
+        } lg:flex`}
       >
-        <ul className="flex flex-col items-center md:flex-row gap-8 md:gap-16 p-6 md:p-0">
+        <ul className="flex flex-col items-center lg:flex-row gap-8 lg:gap-16 p-6 lg:p-0">
           {/* Render regular nav links (Home, About, FAQ) */}
           {navItems.map((item) => (
             <li key={item.path} className="nav-item">

@@ -64,12 +64,18 @@ export default function LyricsDisplay({ incomingLyrics }: LyricsProps) {
   };
 
   return (
-    <div className="w-2/5 flex flex-col justify-between h-[60vh] border rounded-lg bg-gray-100 p-6 shadow-md hover:shadow-lg transition-shadow duration-500 ease-in-out">
-      <h4 className="font-semibold text-3xl font-secondary mb-4 text-center">
+    <div className="
+    max-lg:w-full max-lg:my-4
+    w-2/5 flex flex-col justify-between h-[60vh] border rounded-lg bg-gray-100 p-6 shadow-md hover:shadow-lg transition-shadow duration-500 ease-in-out">
+      <h4 className="
+      max-lg:text-xl max-lg:mb-0
+      font-semibold text-3xl font-secondary mb-4 text-center">
         Lyrics
       </h4>
 
-      <div className="my-3 text-xl font-medium text-justify overflow-y-auto space-y-2">
+      <div className="
+      max-lg:my-1 max-lg:text-sm max-lg:font-normal max-lg:space-y-1
+      my-3 text-xl font-medium text-justify overflow-y-auto space-y-2">
         {lyrics ? (
           lyrics.split(", ").map((line, index) => (
             <p
@@ -95,7 +101,9 @@ export default function LyricsDisplay({ incomingLyrics }: LyricsProps) {
                 disabled={loading}
               >
                 {loading ? (
-                  <div className="w-6 h-6 border-4 border-t-transparent border-accent rounded-full animate-spin"></div>
+                  <div className="
+                  max-lg:text-base
+                  w-6 h-6 border-4 border-t-transparent border-accent rounded-full animate-spin"></div>
                 ) : (
                   "Get Lyrics"
                 )}

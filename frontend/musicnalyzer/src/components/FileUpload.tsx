@@ -180,18 +180,27 @@ export default function FileUpload() {
             </svg>
           </span>
         </label>
-        <label className='cursor-pointer ml-2 text-md' htmlFor='check-2'>
+        <label className='
+        xxs:text-sm
+        lg:text-lg
+        cursor-pointer ml-2' htmlFor='check-2'>
           Is this a solo recording?
         </label>
       </div>
 
       <label
         htmlFor='dropzone-file'
-        className='flex flex-col items-center justify-center w-full border-2 border-accent rounded-lg py-14 text-white cursor-pointer'
+        className='
+        xxs:h-1/4 xxs:py-4
+        lg:h-auto lg:py-14
+        flex flex-col items-center justify-center w-full border-2 border-accent rounded-lg py-14 text-white cursor-pointer'
         style={{ background: "#DE745544" }}
       >
-        <div className='flex flex-col items-center justify-center pt-5 pb-6 text-lg font-normal'>
-          <p className='mb-2 mt-4'>
+        <div className='
+        xxs:text-sm
+        lg:text-lg
+        flex flex-col items-center justify-center pt-5 pb-6 font-normal'>
+          <p className='mb-2 mt-4 xxs:text-center'>
             <span className='font-semibold'>Click to upload</span> or drag and
             drop
           </p>
@@ -208,7 +217,10 @@ export default function FileUpload() {
       </label>
 
       {uploadedFile && (
-        <p className='text-foreground mt-2'>
+        <p className='
+        xxs:text-sm
+        lg:text-lg
+        text-foreground mt-2'>
           Uploaded File: {uploadedFile.name}
         </p>
       )}
@@ -216,19 +228,27 @@ export default function FileUpload() {
       {isLoading ? (
         <div className='flex justify-center mt-4 flex-col items-center'>
           <div className='flex items-center'>
-            <p className='mr-3'>Analyzing</p>
+            <p className='
+            xxs:text-sm
+            lg:text-lg
+            mr-3'>Analyzing</p>
             <ClipLoader color='#4A90E2' loading={isLoading} size={25} />
             {/* console.log(progress) */}
           </div>
           {/* Progress Bar */}
-          {/* Progress Bar */}
           {progress > 0 && (
             <div className="w-full bg-gray-300 rounded-full h-5 mt-4 relative overflow-hidden border border-accent">
               <div
-                className="h-full bg-gradient-to-r from-[#DE745544] to-accent rounded-full animate-pulse transition-all duration-500 ease-in-out"
+                className="
+                xxs:text-sm
+                lg:text-lg
+                h-full bg-gradient-to-r from-[#DE745544] to-accent rounded-full animate-pulse transition-all duration-500 ease-in-out"
                 style={{ width: `${progress}%` }}
               ></div>
-              <span className="absolute inset-0 flex items-center justify-center text-md font-semibold text-white">
+              <span className="
+              xxs:text-sm
+              lg:text-lg
+              absolute inset-0 flex items-center justify-center text-md font-semibold text-white">
                 {progress}%
               </span>
             </div>
@@ -236,12 +256,18 @@ export default function FileUpload() {
 
         </div>
       ) : (
-        <p className='text-center mt-4'>{uploadStatus.message}</p>
+        <p className='
+        xxs:text-sm
+        lg:text-lg
+        text-center mt-4'>{uploadStatus.message}</p>
       )}
 
       <div className='flex justify-center mt-4'>
         <button
-          className={`text-lg py-3 px-6 border-0 rounded-md font-bold transition-all duration-500 ease-in-out ${uploadedFile && uploadStatus.status
+          className={`
+            xxs:text-base xxs:py-1 xxs:px-2 xxs:w-full 
+            lg:text-lg lg:py-3 lg:px-6 lg:w-1/2
+            text-lg py-3 px-6 border-0 rounded-md font-bold transition-all duration-500 ease-in-out ${uploadedFile && uploadStatus.status
             ? "bg-foreground text-white hover:bg-accent"
             : "bg-gray-400 text-gray-200 cursor-not-allowed"
             }`}

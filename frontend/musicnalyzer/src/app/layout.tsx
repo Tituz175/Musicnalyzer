@@ -77,7 +77,7 @@ export default function RootLayout({
           {/* Content that will grow and push the footer down if needed */}
           <main className="flex-grow">{children}</main>
 
-          {/* Footer stays at the bottom */}
+          {/* Footer stays at the bottom of the page, not the screen */}
           <Footer />
         </div>
       </body>

@@ -60,9 +60,15 @@ export default function Waveform({ audioStemsObj, isPlaying, currentTime, onSeek
   }, [currentTime]);
 
   return (
-    <div className="relative w-full">
+    <div className="
+    xxs:w-full
+    lg:w-full
+    relative">
       {/* Styled Dropdown Box */}
-      <div className="absolute top-[-50px] right-0">
+      <div className="
+      max-lg:w-full xxs:flex xxs:justify-center xxs:items-center
+      lg:right-0 lg:block
+      absolute top-[-50px]">
         <label htmlFor="stem-select" className="text-md font-semibold text-foreground">
           Select Stem:
         </label>
