@@ -111,8 +111,8 @@ def generate_vocal_parts(soprano_path):
     alto_path = soprano_path.replace("Soprano", "Alto")
     tenor_path = soprano_path.replace("Soprano", "Tenor")
 
-    alto_audio = librosa.effects.pitch_shift(soprano_audio, sr=sample_rate, n_steps=3)
-    tenor_audio = librosa.effects.pitch_shift(soprano_audio, sr=sample_rate, n_steps=-4)
+    alto_audio = librosa.effects.pitch_shift(soprano_audio, sr=sample_rate, n_steps=4)
+    tenor_audio = librosa.effects.pitch_shift(soprano_audio, sr=sample_rate, n_steps=-5)
 
     sf.write(alto_path, alto_audio, sample_rate)
     sf.write(tenor_path, tenor_audio, sample_rate)

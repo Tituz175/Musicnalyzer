@@ -33,9 +33,17 @@ def extract_lyrics(path):
     """
     model = whisper.load_model("turbo")
     result = model.transcribe(path).get('text')
-    lines = re.split(r'(?<=[.!?]) +', result)
+    
+    # Split by punctuation (., !, ?) to maintain sentence structure
+    sentences = re.split(r'(?<=[.!?]) +', result)
 
-    # Format with line breaks
-    formatted_lyrics = "\n".join(textwrap.fill(line, width=50) for line in lines)
+    # Further split each sentence whenever a capital letter appears (excluding the first letter of the sentence)
+    formatted_lines = []
+    for sentence in sentences:
+        lines = re.split(r'(?=[A-Z])', sentence)  # Splits before capital letters
+        formatted_lines.extend(lines)
+
+    # Format with line breaks and wrap text to a max width of 50 characters
+    formatted_lyrics = "\n".join(textwrap.fill(line.strip(), width=50) for line in formatted_lines if line.strip())
 
     return formatted_lyrics

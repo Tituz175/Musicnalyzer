@@ -162,20 +162,23 @@ export default function AudioPlayer({
     // Handle audio end event to stop playback
     useEffect(() => {
         const handleAudioEnd = () => {
-            setIsPlaying(false);
+            if (audioRefs.current.every(audio => audio && audio?.ended)) {
+                setIsPlaying(false);
+                console.log("Audio ended: " + isPlaying);
+            }
         };
-
+    
         audioRefs.current.forEach((audio) => {
             if (audio) audio.addEventListener("ended", handleAudioEnd);
         });
-
-        // Clean up "ended" event listeners
+    
         return () => {
             audioRefs.current.forEach((audio) => {
                 if (audio) audio.removeEventListener("ended", handleAudioEnd);
             });
         };
-    }, [setIsPlaying]);
+    }, [audioRefs, setIsPlaying]);
+    
 
     // Handle slider change to seek in audio
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {

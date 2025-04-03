@@ -1,3 +1,31 @@
+/**
+ * LyricsDisplay component for displaying and fetching song lyrics.
+ *
+ * This component renders lyrics with a smooth fade-in animation for each line.
+ * If lyrics are not available, it provides a button to fetch them from the server.
+ * The component also handles loading states with a spinner animation.
+ *
+ * Props:
+ * - incomingLyrics: A string containing the initial lyrics to display.
+ *
+ * Functional Components:
+ * - changeOnServer: Sends a request to fetch lyrics from the server.
+ * - handleResponse: Processes the server response and updates the lyrics state.
+ * - handleLyrics: Manages the lyric fetching process, including UI state updates.
+ *
+ * Key Features:
+ * - Displays lyrics with staggered fade-in effects.
+ * - Fetches lyrics dynamically if not provided initially.
+ * - Handles loading state with a spinner animation.
+ * - Responsive and adaptive layout.
+ *
+ * Usage:
+ * 
+ * <LyricsDisplay incomingLyrics={lyrics} />
+ *
+ * @returns {JSX.Element} The rendered LyricsDisplay component.
+ */
+
 import { useState } from "react";
 
 interface LyricsProps {
@@ -77,7 +105,7 @@ export default function LyricsDisplay({ incomingLyrics }: LyricsProps) {
       max-lg:my-1 max-lg:text-sm max-lg:font-normal max-lg:space-y-1
       my-3 text-xl font-medium text-justify overflow-y-auto space-y-2">
         {lyrics ? (
-          lyrics.split(", ").map((line, index) => (
+          lyrics.split(/(?=[A-Z])/).map((line, index) => (
             <p
               key={index}
               className="whitespace-pre-line leading-relaxed text-foreground animate-fade-in-down"
