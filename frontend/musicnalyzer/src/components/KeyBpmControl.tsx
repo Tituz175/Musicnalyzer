@@ -1,3 +1,46 @@
+/**
+
+KeyBpmControl component for modifying the musical key and BPM of an audio track.
+This component allows users to adjust the musical key and beats per minute (BPM) of an audio file.
+It provides buttons for incrementing/decrementing the key, a dropdown for direct key selection,
+and an input field for BPM modification. Additionally, it supports resetting modifications back
+to the original key and BPM values.
+
+Props:
+incomingmusicalKey: The initial musical key of the track.
+incomingbpm: The initial beats per minute of the track.
+onKeyChange: Callback function to update audio stems and their properties.
+originalKey: The original key of the track before modifications.
+originalBpm: The original BPM of the track before modifications.
+stems: Object containing URLs for each audio stem (e.g., soprano, alto, tenor, instrumentals).
+
+Functional Components:
+handleChange: Sends a request to change either the key or BPM on the server.
+handleBpmInputChange: Handles BPM input changes and updates the track accordingly.
+handleReset: Resets the key and BPM to their original values.
+getDynamicKeyList: Generates a dynamically sorted list of musical keys with the current key in the center.
+
+Key Features:
+Allows dynamic modification of the musical key with a dropdown selection and increment/decrement buttons.
+Enables BPM adjustments through direct input.
+Supports communication with the backend to apply changes in key and BPM.
+Provides a reset functionality to restore the original key and BPM.
+Manages UI state, including dropdown visibility and loading indicators.
+
+Usage:
+<KeyBpmControl
+incomingmusicalKey="C"
+incomingbpm="120"
+onKeyChange={handleKeyChange}
+originalKey="C"
+originalBpm={120}
+stems={audioStems}
+/>
+
+@returns {JSX.Element} The rendered KeyBpmControl component.
+*/
+
+
 import { useState, useEffect, useRef } from "react";
 
 const MUSICAL_KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -102,7 +145,6 @@ export default function KeyBpmControl({
             const { soprano, alto, tenor, instrumental, new_key, new_bpm } = data;
             const newStems: AudioStems = { soprano, alto, tenor, instrumentals: instrumental };
             
-
             if (type === "key") {
                 setMusicalKey(new_key);
                 onKeyChange(newStems, { newKey: new_key });
@@ -125,8 +167,6 @@ export default function KeyBpmControl({
         // event: React.MouseEvent
     ) => {
         const url = type === "key" ? "/change_key" : "/change_bpm";
-        // const newBPM = type === "bpm" ? parseInt(bpm) + value : parseInt(bpm);
-
         try {
             const response = await changeOnServer(
                 `http://localhost:5000${url}`,
@@ -158,7 +198,6 @@ export default function KeyBpmControl({
     
         if (!isNaN(parsedTemp) && parsedTemp !== parsedCurrent) {
             const diff = parsedTemp - parsedCurrent;
-    
             await handleChange("bpm", diff);
         } else {
             // Reset tempBpm if invalid or unchanged
@@ -188,14 +227,18 @@ export default function KeyBpmControl({
     return (
         <div className="
         max-lg:space-x-2 max-lg:py-2
-        w-full flex justify-around items-center text-2xl font-semibold py-6 space-x-6">
+        w-full flex justify-around items-center text-2xl font-semibold py-6 space-x-6 mb-14">
             {/* Key Control */}
-            <div className="relative flex flex-col items-center" ref={dropdownRef}>
+            <div className="
+            relative flex flex-col items-center" ref={dropdownRef}>
                 <h4 className="
                 max-lg:text-lg max-lg:font-bold
                 text-center mb-2">Key</h4>
-                <div className="flex items-center border-2 border-accent rounded-lg overflow-hidden">
-                    <button className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90" onClick={() => handleChange("key", -1)}>-</button>
+                <div className="
+                flex items-center border-2 border-accent rounded-lg overflow-hidden">
+                    <button className="
+                    px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90" 
+                    onClick={() => handleChange("key", -1)}>-</button>
                     <div
                         className="
                         max-lg:text-lg max-lg:font-bold max-lg:px-3 max-lg:py-0.5
@@ -238,7 +281,9 @@ export default function KeyBpmControl({
             {/* Reset Button */}
             {showResetButton && (
                 <button
-                    className="px-6 py-2 border-2 border-accent text-foreground rounded-lg hover:bg-accent hover:text-white transition-all duration-300 ease-in-out"
+                    className="
+                    max-lg:text-lg max-lg:font-bold max-lg:px-3 max-lg:py-0.5
+                    px-6 py-2 border-2 border-accent text-foreground rounded-lg hover:bg-accent hover:text-white transition-all duration-300 ease-in-out"
                     onClick={handleReset}
                 >
                     {loading ? "Loading..." : "Reset"}
@@ -247,7 +292,9 @@ export default function KeyBpmControl({
 
             {/* BPM Control */}
             <div className="flex flex-col items-center">
-                <h4 className="text-center mb-2">BPM</h4>
+                <h4 className="
+                max-lg:text-lg max-lg:font-bold
+                text-center mb-2">BPM</h4>
                 <div className="flex items-center border-2 border-accent rounded-lg overflow-hidden">
                     <button
                         className="px-4 py-2 cursor-pointer hover:bg-accent hover:text-white transition active:scale-90"
@@ -257,7 +304,9 @@ export default function KeyBpmControl({
                     </button>
                     <input
                         type="number"
-                        className="px-4 py-2 text-center border-x-2 border-accent bg-gray-50 w-20 focus:outline-none"
+                        className="
+                        max-lg:text-lg max-lg:font-bold max-lg:px-3 max-lg:w-[55px] max-lg:py-0.5
+                        px-6 py-2 text-center border-x-2 border-accent bg-gray-50 w-20 focus:outline-none"
                         value={tempBpm}
                         onChange={(e) => setTempBpm(e.target.value)}
                         onBlur={handleBpmInputChange}

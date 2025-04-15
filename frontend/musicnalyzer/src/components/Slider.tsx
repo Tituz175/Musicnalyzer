@@ -1,4 +1,12 @@
-// import { useState } from 'react';
+/**
+ * A vertical slider component for adjusting volume levels.
+ *
+ * This component displays a range input that allows users to modify the volume.
+ * It also shows the current volume as a percentage and an optional label.
+ *
+ * @param {SliderProps} props - The properties of the vertical slider component.
+ * @returns {JSX.Element} The rendered vertical slider.
+ */
 
 interface sliderprops {
   volume: number;
@@ -13,7 +21,7 @@ const VerticalSlider: React.FC<sliderprops> = ({ volume, stem, onVolumeChange, i
   };
 
   return (
-    <div className={`slider-container flex ${stem == "" ? "hidden" : ""}`}>
+    <div className={`max-2xl:w-[80px] slider-container flex ${stem == "" ? "hidden" : ""}`}>
       <div className="value-display" id='rangeValue'>
         {(volume * 100).toFixed(0)}%
       </div>
@@ -27,7 +35,9 @@ const VerticalSlider: React.FC<sliderprops> = ({ volume, stem, onVolumeChange, i
         max="1"
         onChange={handleVolumeChange}
       />
-      <div className="slider-title font-bold">
+      <div className="
+      max-lg:text-sm max-lg:font-bold
+      slider-title font-bold">
         {inputValue}
       </div>
     </div>

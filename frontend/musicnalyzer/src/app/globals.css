@@ -50,7 +50,8 @@ body::-webkit-scrollbar {
   width: 100px;
   position: relative;
   justify-content: space-between;
-  height: 20vh;
+  min-height: 28vh;
+  /* border: 1px solid red; */
 }
 
 .value-display {
@@ -65,6 +66,8 @@ body::-webkit-scrollbar {
       -5px -5px 10px var(--foreground-tertiary),
       inset 5px 5px 10px rgba(0, 0, 0, 0.1),
       inset -5px -5px 5px rgba(255, 255, 255, 0.25);
+  /* margin-bottom: 10%; */
+  /* border: 1px solid red; */
 }
 
 .vertical {
@@ -77,7 +80,8 @@ body::-webkit-scrollbar {
 }
 
 .range {
-  width: 200px; 
+  width: 210px;
+  /* max-width: 250px;  */
   height: auto;
   appearance: none;
   background: #edf1f4;
@@ -88,6 +92,8 @@ body::-webkit-scrollbar {
       inset 5px 5px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
+  /* border-bottom: 1px solid red; */
+  /* margin-bottom: 50%; */
 }
 
 .range::-webkit-slider-thumb {
@@ -106,6 +112,8 @@ body::-webkit-scrollbar {
   /* margin-top: 10px; */
   text-align: center;
   font-size: 1rem;
+  /* margin-top: 98%; */
+  /* border: 1px solid red; */
   /* color: var(--foreground-tertiary); */
 }
 
@@ -113,4 +121,136 @@ input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* --------------------
+   Responsive Design 
+-------------------- */
+
+/* Extra small devices - phones (xxs) */
+@media screen and (max-width: 320px) {
+  .slider-container {
+    width: 80px;
+  }
+
+  .range {
+    width: 150px;
+  }
+
+  .value-display {
+    font-size: 1rem;
+    width: 50px;
+  }
+
+  .slider-title {
+    font-size: 0.9rem;
+  }
+}
+
+/* xs - phones */
+@media screen and (min-width: 321px) and (max-width: 374px) {
+  .slider-container {
+    width: 90px;
+  }
+
+  .range {
+    width: 170px;
+  }
+
+  .value-display {
+    font-size: 1.1rem;
+    width: 55px;
+  }
+
+  .slider-title {
+    font-size: 0.95rem;
+  }
+}
+
+/* sm - phones */
+@media screen and (min-width: 375px) and (max-width: 424px) {
+  .slider-container {
+    width: 100px;
+  }
+
+  .range {
+    width: 190px;
+  }
+}
+
+/* md - tablets */
+@media screen and (min-width: 768px) {
+  .slider-container {
+    width: 120px;
+  }
+
+  .range {
+    width: 230px;
+  }
+
+  .value-display {
+    font-size: 1.3rem;
+    width: 65px;
+  }
+
+  .slider-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* lg - desktops */
+@media screen and (min-width: 1024px) {
+  .slider-container {
+    width: 140px;
+  }
+
+  .range {
+    width: 260px;
+  }
+
+  .value-display {
+    font-size: 1.4rem;
+  }
+
+  .slider-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* xl - large desktops */
+@media screen and (min-width: 1440px) {
+  .slider-container {
+    width: 160px;
+  }
+
+  .range {
+    width: 280px;
+  }
+
+  .value-display {
+    font-size: 1.5rem;
+  }
+
+  .slider-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* 2xl - ultra wide */
+@media screen and (min-width: 1536px) {
+  .slider-container {
+    width: 180px;
+  }
+
+  .range {
+    width: 300px;
+  }
+
+  .value-display {
+    font-size: 1.6rem;
+  }
+
+  .slider-title {
+    font-size: 1.4rem;
+  }
 }

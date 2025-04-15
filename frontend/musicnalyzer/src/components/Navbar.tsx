@@ -54,8 +54,9 @@ export default function NavBar() {
     <nav className="
     sm:px-6 
     md:px-14 
-    xl:px-60
-    w-full bg-secondary font-secondary flex items-center justify-between h-20 px-6 text-2xl font-semibold sticky top-0 z-30">
+    xl:px-32
+    2xl:px-60
+    w-full bg-secondary font-secondary flex items-center justify-between h-20 text-2xl font-semibold sticky top-0 z-30">
       {/* Brand Logo */}
       <div className="flex items-center">
         <Link href="/" className="text-4xl font-extrabold">
@@ -84,7 +85,7 @@ export default function NavBar() {
               <button
                 onClick={() => handleNavClick(item.path)}
                 className={`nav-link text-xl md:text-2xl ${
-                  pathname === item.path ? "text-accent font-bold" : "text-white"
+                  pathname === item.path ? "text-black font-bold" : "text-foreground"
                 }`}
               >
                 {item.name}
@@ -98,7 +99,7 @@ export default function NavBar() {
               <button
                 onClick={() => handleNavClick("/upload")}
                 className={`nav-link text-xl md:text-2xl ${
-                  pathname === "/upload" ? "text-accent font-bold" : "text-white"
+                  pathname === "/upload" ? "text-black font-bold" : "text-foreground"
                 }`}
               >
                 Upload
@@ -112,7 +113,7 @@ export default function NavBar() {
               <button
                 onClick={() => handleNavClick("/analyze")}
                 className={`nav-link text-xl md:text-2xl ${
-                  pathname === "/analyze" ? "text-accent font-bold" : "text-white"
+                  pathname === "/analyze" ? "text-black font-bold" : "text-foreground"
                 }`}
               >
                 Analyze

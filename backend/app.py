@@ -54,46 +54,16 @@ def insert_song():
         Response: JSON response indicating success or failure of the operation.
     """
 
-
-    # file = request.files["file"]
-    # print("File received:", file.filename)
-
-    # socketio.emit("progress", 10)
-    # print("Emitted progress 10")
-
-    # Simulate file processing
-    # for i in [20, 50, 80, 100]:
-    #     socketio.sleep(2)
-        
-    #     socketio.emit("progress", i)
-    #     print(f"Emitted progress {i}")
-
-
-    # return jsonify({"message": "File uploaded successfully"})
-
-
     file = request.files.get('file')
     if not file or file.filename == '':
         return jsonify({"error": "No selected file"}), 400
-    
-    # socketio.emit("progress", 10)
-    # print("Emitted progress 10")
 
     is_solo = request.form.get('isSolo').capitalize()
     artist = request.form.get('artist', "")
     duration = request.form.get('duration', "0")
 
-    
-    # print("Socket: ", socketio.emit("progress", 10))
-    # time.sleep(2)
-
-    # socketio.emit("progress", 30)
-    # print("Emitted progress 30")
-
     response = song_controller.insert_song(app, socketio, emit, file, is_solo, artist, duration)
 
-    # socketio.emit("progress", 100)
-    # print("Emitted progress 100")
     return jsonify(response), response.get("status_code", 200)
 
 

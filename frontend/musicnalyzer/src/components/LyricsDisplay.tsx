@@ -92,9 +92,9 @@ export default function LyricsDisplay({ incomingLyrics }: LyricsProps) {
   };
 
   return (
-    <div className="
-    max-lg:w-full max-lg:my-4
-    w-2/5 flex flex-col justify-between h-[60vh] border rounded-lg bg-gray-100 p-6 shadow-md hover:shadow-lg transition-shadow duration-500 ease-in-out">
+    <div className={`
+    max-lg:w-full max-lg:my-4 max-lg:h-[30vh] lg:h-[55vh]
+    w-2/5 flex flex-col ${lyrics ? 'justify-start' : 'justify-between'} h-[60vh] border rounded-lg bg-gray-100 p-6 shadow-md hover:shadow-lg transition-shadow duration-500 ease-in-out`}>
       <h4 className="
       max-lg:text-xl max-lg:mb-0
       font-semibold text-3xl font-secondary mb-4 text-center">

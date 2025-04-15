@@ -235,7 +235,7 @@ export default function Analyze() {
   
 
   return (
-    <div className='px-4 xxs:px-6 xxs:py-0 xxs:my-3 md:px-14 lg:px-60 my-14 lg:py-14 text-foreground'>
+    <div className='px-4 xxs:px-6 xxs:py-0 xxs:my-3 md:px-14 xl:px-32 2xl:px-60 my-14 lg:py-10 text-foreground'>
       <MetadataDisplay
         title={metaDataParsed?.title || "Unknown Title"}
         artist={metaDataParsed?.artist || "Unknown Artist"}
@@ -250,6 +250,9 @@ export default function Analyze() {
         flex w-full justify-between">
           <div className='
           max-lg:w-full max-lg:p-2
+          lg:w-3/6
+          lg:p-5
+          xl:w-2/5
           w-2/5 flex flex-col items-center justify-center p-10'>
             <KeyBpmControl
               incomingmusicalKey={songData?.musical_key || ""}

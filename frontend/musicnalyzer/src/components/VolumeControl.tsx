@@ -22,7 +22,9 @@ export default function VolumeControl({
   stemsUrl,
 }: VolumeControlProps) {
   return (
-    <div className='w-full flex justify-evenly'>
+    <div className='
+    max-lg:w-10/12 max-md:justify-center
+    w-full flex justify-evenly'>
       <VerticalSlider
         volume={volume.soprano}
         stem={stemsUrl.soprano}
