@@ -159,7 +159,7 @@ export default function Home() {
           <Card
             image='/images/card_img_3.jpeg'
             title='Lyrics in Multiple Languages'
-            paragraph='Precisely isolate soprano, alto, and tenor parts with the song instrumental. Analyze each vocal line for performance, technique, and harmonic relationships. Practice these parts independently or collaboratively to enhance your skills.'
+            paragraph='Automatically extract and display song lyrics with high accuracy to deepen comprehension and cultural connection. Perfect for singers, language learners, and curious minds who want to experience music beyond the melody.'
           />
         </div>
       </section>

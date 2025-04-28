@@ -52,7 +52,7 @@ export default function NavBar() {
 
   return (
     <nav className="
-    sm:px-6 
+    xxs:px-6
     md:px-14 
     xl:px-32
     2xl:px-60
